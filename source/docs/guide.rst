@@ -19,4 +19,3 @@ SGL开发手册
    guide/pgsbar.rst
    guide/checkbox.rst
    guide/radiobtn.rst
-
