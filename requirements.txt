@@ -1,2 +1,5 @@
 sphinx-rtd-theme
 sphinx-togglebutton
+myst_parser
+sphinx_copybutton
+sphinxemoji.sphinxemoji

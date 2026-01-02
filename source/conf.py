@@ -16,11 +16,6 @@ release = 'SGL_20260101'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = [
-    'myst_parser',
-    'sphinx_copybutton',
-    'sphinxemoji.sphinxemoji',
-]
 
 language = 'zh_CN'
 
