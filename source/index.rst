@@ -8,13 +8,13 @@ Welcome to SGL's documentation!
 
 .. image:: SGL_logo.png
 
-SGL(Small Graphics Library)是一个非常轻量的GUI图形库，其设计的初衷就是针对低端处理器市场提供一个现代化的图形框架。代码仓库：https://github.com/sgl-org/sgl
+SGL(Small Graphics Library)是一个非常轻量的GUI图形库，其设计的初衷就是针对低端处理器市场提供一个现代化的图形框架。代码仓库：\ `SGL on GitHub <https://github.com/sgl-org/sgl>`_
 
 .. toctree::
    :maxdepth: 4
    :caption: Contents:
 
-   docs/start.rst
+   docs/start
 
 
 Indices and tables
