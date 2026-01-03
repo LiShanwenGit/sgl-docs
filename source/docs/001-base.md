@@ -116,5 +116,5 @@ sgl_obj_t *button = sgl_button_create(NULL);
 sgl_obj_set_pos(button, 20, 20);
 sgl_obj_set_size(button, 200, 100);
 sgl_obj_set_event_cb(button, button_event_cb, 123456);
-    ...
+...
 ```
