@@ -11,14 +11,15 @@ Welcome to SGL's documentation!
 SGL(Small Graphics Library)是一个非常轻量的GUI图形库，其设计的初衷就是针对低端处理器市场提供一个现代化的图形框架。代码仓库：\ `SGL on GitHub <https://github.com/sgl-org/sgl>`_
 SGL官方技术交流群QQ：544602724，欢迎大家加入！！！
    
-SGL UI库特点: 
-- 轻量级，最小只需要`3KBytes RAM`和`15KBytes ROM`即可运行
+SGL UI库特点:
+
+- 轻量级，最小只需要 ``3KBytes RAM`` 和 ``15KBytes ROM`` 即可运行
 - 部分帧缓冲支持，最小只需要一行屏幕分辨率的缓冲即可
-- 包围盒+贪心算法的脏矩形算法
+- 包围盒 + 贪心算法的脏矩形算法
 - 支持帧缓冲控制器，直接向帧缓冲控制器写入数据，零拷贝
-- 颜色深度支持: `8bit`, `16bit`, `24bit`, `32bit`
+- 颜色深度支持: ``8bit``, ``16bit``, ``24bit``, ``32bit``
 - 现代化的字体取模工具
-- `SGL`自己的`UI`设计器，图形化拖动绘制界面后一键可生成代码
+- ``SGL`` 自己的 ``UI`` 设计器，图形化拖动绘制界面后一键可生成代码
 
 .. toctree::
    :maxdepth: 2
