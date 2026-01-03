@@ -1,0 +1,75 @@
+## SGL基础知识
+### page概念
+SGL中的page表示一个绘制页面，其大小为屏幕的宽和高，无法改变，所有的控件都绘制在page中，也就是page是所有的控件的根控件。在调用sgl_init()时就默认创建一个page，作为一个活动的page。
+用户也可以自己创建一个page，用来做多页面切换显示。
+
+#### 页面创建（根控件创建）
+使用sgl_obj_create(NULL)函数创建一个pag，函数原型如下：
+```c
+sgl_obj_t* sgl_obj_create(sgl_obj_t *parent);
+```
+例如下面创建两个页面，然后将第二个页面作为活动页面：
+```c
+sgl_obj_t *page1 = sgl_obj_create(NULL);
+sgl_obj_t *page2 = sgl_obj_create(NULL);
+sgl_screen_load(page2);
+```
+  
+#### 设置背景色
+使用sgl_page_set_color()函数设置页面的背景色，函数原型如下：
+```c
+void sgl_page_set_color(sgl_obj_t* obj, sgl_color_t color);
+```
+
+#### 设置页面背景图片
+使用sgl_page_set_pixmap()函数设置页面的背景图片，函数原型如下：
+```c
+void sgl_page_set_pixmap(sgl_obj_t* obj, const sgl_pixmap_t *pixmap);
+```
+例如下面创建一个页面，并设置其背景图片为test_pixmap：
+```c
+extern const unsigned char gImage_test[7080];
+const sgl_pixmap_t test_pixmap = {
+    .width = 60,
+    .height = 59,
+    .bitmap = gImage_test,
+};
+
+sgl_obj_t *page = sgl_obj_create(NULL);
+sgl_page_set_pixmap(page, &test_pixmap);
+```
+      
+### 控件删除
+在一些情况下，用户需要删除一个控件，可以使用sgl_obj_delete()函数，函数原型如下：
+```c
+void sgl_obj_delete(sgl_obj_t *obj);
+```
+例如下面创建一个按钮，并删除该按钮：
+```c
+sgl_obj_t *btn = sgl_button_create(NULL);
+sgl_obj_set_pos(btn, 10, 10);
+sgl_obj_set_size(btn, 100, 50);
+.....
+sgl_obj_delete(btn);
+```
+```{tip}
+删除控件时，如果该控件有子控件，则子控件也会被删除。如果使用sgl_obj_delete(NULL)，则会删除当前活动页面的所有控件，但不会删除该页面。如果使用gl_obj_delete(page1)，则会删除page1，并且page1的所有子控件也被删除。
+```
+
+#### 控件层级设置
+SGL的所有控件不仅仅有父子关系，还有层级关系，即控件的绘制顺序，对于兄弟控件，即父控件下的多个控件，绘制顺序是先绘制先创建的控件，再绘制后创建的控件，从视觉上来说，如果存在重叠，则后创建的控件会覆盖先创建的控件。
+用户可以使用sgl_obj_move_up, sgl_obj_move_down, sgl_obj_move_foreground, sgl_obj_move_background函数来设置控件的层级关系，函数原型如下：
+```c
+void sgl_obj_move_up(sgl_obj_t *obj);
+void sgl_obj_move_down(sgl_obj_t *obj);
+void sgl_obj_move_foreground(sgl_obj_t *obj);
+void sgl_obj_move_background(sgl_obj_t *obj);
+```
+- sgl_obj_move_up函数用于将控件上移一个层级
+- sgl_obj_move_down函数用于将控件下移一个层级
+- sgl_obj_move_foreground函数用于将控件移到最上层
+- sgl_obj_move_background函数用于将控件移到最下层
+
+```{note}
+上面的函数只能对控件的层级关系有效，不会改变控件的父子关系。如果控件A和控件B的父控件是同一个，则上面的函数是有效的，否则无效。
+```
