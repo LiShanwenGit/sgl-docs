@@ -17,8 +17,9 @@ SGL官方技术交流群QQ：544602724，欢迎大家加入！！！
 
    docs/start.rst
    docs/page.rst
+   
 
 QQ交流群
 ==================
 .. image:: qqgroup.png
-   :width: 200px
+   :width: 300px
