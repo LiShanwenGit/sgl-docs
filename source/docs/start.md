@@ -196,6 +196,7 @@ bool panel_flush_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2, sgl_color_
     return true;            
 }  
 ```
+当然，对于使用DMA发送数据时，请使用双缓冲，即添加一个缓冲区，即`buffer[1]`，大小和`buffer[0]`一样，即`buffer_size`
 ```        
                   
 编译后，烧录到开发板上，即可看到屏幕显示“Hello SGL!”，整个移植主要只有四件事：    
