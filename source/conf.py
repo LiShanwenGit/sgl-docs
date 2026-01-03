@@ -32,9 +32,3 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 html_static_path = ['_static']
 templates_path = ['_templates']
 exclude_patterns = []
-
-html_theme_options = {
-    'collapse_navigation': False,
-    'display_version': True,
-    'navigation_depth': 4,
-}
