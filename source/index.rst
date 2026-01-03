@@ -13,14 +13,11 @@ SGL官方技术交流群QQ：544602724，欢迎大家加入！！！
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: 目录:
 
    docs/start.rst
    docs/page.rst
 
-Indices and tables
+QQ交流群
 ==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. image:: qqgroup.png
