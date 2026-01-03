@@ -15,9 +15,9 @@ SGL官方技术交流群QQ：544602724，欢迎大家加入！！！
    :maxdepth: 2
    :caption: 目录:
 
-   docs/start.rst
-   docs/page.rst
-   
+   docs/start.md
+   docs/page.md
+
 
 QQ交流群
 ==================
