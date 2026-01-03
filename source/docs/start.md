@@ -211,26 +211,26 @@ sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮
 ### KEIL IDE使用
 #### 1. 创建工程
 1. 新建一个`SGL_STM32F103`目录，然后创建一个`sgl`目录，然后将`sgl`源码的`source`目录下的所有文件复制到`SGL_STM32F103/sgl/`目录下。      
-    ![alt text](imgs/mdk5/image-1.png)
+    ![alt text](imgs/mdk5/image-1.png){width=400}
 
 2. 打开`MDK5`软件，新建一个名为`SGL_STM32F103`的工程，保存到`SGL_STM32F103`目录下，点击【保存】。      
-    ![alt text](imgs/mdk5/img-2.jpg)
+    ![alt text](imgs/mdk5/img-2.jpg){width=400}
 
 
 3. 此时会进入芯片选择界面，然后选择STM32F103C8芯片，点击【OK】      
-    ![alt text](imgs/mdk5/img-3.jpg)
+    ![alt text](imgs/mdk5/img-3.jpg){width=400}
 
 4. 此时会进入`Manage Run-Time Environment`界面，勾选`CMSIS`和`Startup`，然后点击【OK】。       
-    ![alt text](imgs/mdk5/img-4.jpg)
+    ![alt text](imgs/mdk5/img-4.jpg){width=400}
 
 5. 点击文件扩展管理器:      
-    ![alt text](imgs/mdk5/img-5.jpg)
+    ![alt text](imgs/mdk5/img-5.jpg){width=400}
 
     然后新建`sgl`和`example`目录结构，然后在`sgl`结构中，将`sgl/core/`目录下所有c文件添加，将`sgl/draw/`目录下所有c文件添加，将`sgl/fonts/`目录下所有c文件添加，将`sgl/source/mm/lwmem/`目录下的所有c文件添加，将`sgl/source/widgets/`目录下的所有文件添加，添加完毕后，目录结构如下：           
-    ![alt text](imgs/mdk5/img-6.jpg)
+    ![alt text](imgs/mdk5/img-6.jpg){width=400}
 
 6. 新建一个`main.c`文件，然后保存到`example`文件夹下：            
-    ![alt text](imgs/mdk5/img-7.jpg)
+    ![alt text](imgs/mdk5/img-7.jpg){width=400}
 
     然后输入如下代码：          
     ```c
@@ -318,14 +318,14 @@ sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮
     ```
 #### 配置编译选项
 1. 打开`Options for Target`窗口，然后找到`Target`选项:             
-    ![alt text](imgs/mdk5/img-8.jpg)
+    ![alt text](imgs/mdk5/img-8.jpg){width=400}
 
     选择`V6`版本编译器
 2. 点击`C/C++(AC6)`选项`，然后选择如下配置：              
-    ![alt text](imgs/mdk5/img-9.jpg)
+    ![alt text](imgs/mdk5/img-9.jpg){width=400}
 
    然后添加头文件路径，将`sgl/include`添加到`Include Path`中，将`sgl`目录添加到`Include Path`中。                   
-    ![alt text](imgs/mdk5/img-10.jpg)
+    ![alt text](imgs/mdk5/img-10.jpg){width=400}
 
 #### 创建一个简单的demo
 在`main.c`中添加如下代码：
