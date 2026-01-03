@@ -186,7 +186,7 @@ panel_flush_area函数用于刷新指定区域，参数为：
 例如：
 使用DMA发送数据：   
 
-```
+```c
 bool panel_flush_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2, sgl_color_t *src)            
 {             
     if (DMA_IS_BUSY()) {          
@@ -196,8 +196,7 @@ bool panel_flush_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2, sgl_color_
     return true;            
 }  
 ```
-           
-```
+```        
                   
 编译后，烧录到开发板上，即可看到屏幕显示“Hello SGL!”，整个移植主要只有四件事：    
 - 1. 调用sgl_device_fb_register()函数注册FB设备      
