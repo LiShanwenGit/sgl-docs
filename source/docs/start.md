@@ -184,15 +184,15 @@ panel_flush_area函数用于刷新指定区域，参数为：
 ```{tip}
 如果没有使用DMA发送数据，则直接返回true即可，如果使用DMA发送数据，则需要先检测下DMA是否空闲，如果是空闲的，则发送数据后，返回true，如果DMA未空闲，则返回false。
 例如：
-使用DMA发送数据：
-bool panel_flush_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2, sgl_color_t *src)
-{
-    if (DMA_IS_BUSY()) {
+使用DMA发送数据：        
+bool panel_flush_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2, sgl_color_t *src)            
+{             
+    if (DMA_IS_BUSY()) {          
         return false;
-    }
-    DMA_SendData(src, (x2 - x1 + 1) * (y2 - y1 + 1)* sizeof(sgl_color_t));
-    return true;
-}
+    }           
+    DMA_SendData(src, (x2 - x1 + 1) * (y2 - y1 + 1)* sizeof(sgl_color_t));          
+    return true;            
+}          
 ```
                   
 编译后，烧录到开发板上，即可看到屏幕显示“Hello SGL!”，整个移植主要只有三件事：    
