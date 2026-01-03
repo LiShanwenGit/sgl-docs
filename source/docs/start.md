@@ -143,7 +143,7 @@ int main(void)
 
     // 注册Framebuffer设备
     sgl_device_fb_register(&fb_dev);
-    // 注册日志设备
+    // 注册日志设备，可选
     sgl_device_log_register(uart_put_string);
 
     tft_init();
@@ -164,7 +164,7 @@ int main(void)
 }
 
 ```
-上面的过程中定义了一个`sgl_device_fb_t`结构体，并且初始化了一些主要的参数，参数的含义如下： 
+上面的过程中定义了一个sgl_device_fb_t结构体，并且初始化了一些主要的参数，参数的含义如下： 
 - `xres`: 屏幕的宽度          
 - `yres`: 屏幕的高度            
 - `xres_virtual`: 屏幕的虚拟宽度     
@@ -173,7 +173,7 @@ int main(void)
 - `buffer[0]`：帧缓冲区指针，指向帧缓冲区地址处，如何需要双帧缓冲区，则需要设置`buffer[1]`        
 - `buffer_size`：帧缓冲区大小，单位：缓冲区中像素点的个数          
            
-`panel_flush_area`函数用于刷新指定区域，参数为：
+panel_flush_area函数用于刷新指定区域，参数为：
 - `x1`：区域左上角X坐标
 - `y1`：区域左上角Y坐标
 - `x2`：区域右下角X坐标
@@ -196,7 +196,16 @@ bool panel_flush_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2, sgl_color_
 }
 ```
 ```
-
+编译后，烧录到开发板上，即可看到屏幕显示“Hello SGL!”，整个移植主要只有三件事：    
+- 1. 调用sgl_device_fb_register()函数注册FB设备      
+- 2. 调用sgl_device_log_register()函数注册日志设备，可选        
+- 3. 调用sgl_init()函数初始化SGL框架       
+- 4. 在滴答中断中调用sgl_tick_inc()函数，定时为1ms    
+       
+```{tip}
+sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮询或者线程中调用，每1ms调用一次即可。
+```
+              
 ### Linux FB平台
 （此处填写Linux FrameBuffer平台的移植步骤）
 1.  确保Linux系统启用FrameBuffer功能
