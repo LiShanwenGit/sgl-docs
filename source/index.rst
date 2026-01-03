@@ -27,7 +27,9 @@ SGL UI库特点:
 
    docs/start.md
    docs/001-base.md
-   docs/002-button.md
+   docs/002-fontgen.md
+   docs/003-pixmapgen.md
+   docs/004-button.md
 
 
 QQ交流群
