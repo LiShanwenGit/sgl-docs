@@ -188,8 +188,8 @@ panel_flush_area函数用于刷新指定区域，参数为：
 bool panel_flush_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2, sgl_color_t *src)            
 {             
     if (DMA_IS_BUSY()) {          
-        return false;
-    }           
+        return false;        
+    }              
     DMA_SendData(src, (x2 - x1 + 1) * (y2 - y1 + 1)* sizeof(sgl_color_t));          
     return true;            
 }          
