@@ -195,7 +195,6 @@ bool panel_flush_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2, sgl_color_
     return true;
 }
 ```
-```
                   
 编译后，烧录到开发板上，即可看到屏幕显示“Hello SGL!”，整个移植主要只有三件事：    
 - 1. 调用sgl_device_fb_register()函数注册FB设备      
