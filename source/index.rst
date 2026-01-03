@@ -12,7 +12,7 @@ SGL(Small Graphics Library)是一个非常轻量的GUI图形库，其设计的�
 SGL官方技术交流群QQ：544602724，欢迎大家加入！！！
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
    :caption: Contents:
 
    docs/start.rst
