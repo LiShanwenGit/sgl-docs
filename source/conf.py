@@ -18,7 +18,9 @@ release = 'SGL_20260101'
 
 extensions = [
     'sphinx_copybutton',
+    'myst_parser'
 ]
+
 
 language = 'zh_CN'
 

@@ -15,7 +15,7 @@ SGL(Small Graphics Library)是一个非常轻量的GUI图形库，其设计的�
    :caption: Contents:
 
    docs/start.md
-   
+
 
 Indices and tables
 ==================
