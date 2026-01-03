@@ -34,7 +34,7 @@ templates_path = ['_templates']
 exclude_patterns = []
 
 html_theme_options = {
-    'collapse_navigation': True,      # 允许折叠
-    'sticky_navigation': True,        # 固定导航
-    'navigation_depth': 4,            # 控制显示深度
+    'collapse_navigation': False,
+    'display_version': True,
+    'navigation_depth': 4,
 }
