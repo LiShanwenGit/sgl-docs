@@ -17,29 +17,13 @@
         make -j8
         make run
     ```
-```{note}
-这是一个提示信息。
-```
-
-```{warning}
-这是一个警告信息！
-```
-
+5. 执行完毕后，即可看到一个窗口，显示SGL的示例程序运行效果        
 ```{tip}
-这是一个小技巧。
+如果想修改模拟器的分辨率，可以在`sgl_port_sdl2.c`文件中修改`CONFIG_SGL_PANEL_WIDTH`和`CONFIG_SGL_PANEL_HEIGHT`的值
 ```
-
-```{danger}
-危险操作！可能导致系统崩溃。
-```
-
 
 ### MCU平台
-（此处填写MCU平台的移植步骤，例如STM32、GD32等平台的具体操作）
-1.  准备目标MCU的开发环境（如Keil、STM32CubeMX）
-2.  导入SGL核心库源码（include/、src/目录）
-3.  适配MCU的显示驱动、GPIO驱动
-4.  编译并下载验证
+
 
 ### Linux FB平台
 （此处填写Linux FrameBuffer平台的移植步骤）
