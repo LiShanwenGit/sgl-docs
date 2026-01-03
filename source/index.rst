@@ -16,6 +16,7 @@ SGL官方技术交流群QQ：544602724，欢迎大家加入！！！
    :caption: Contents:
 
    docs/start.rst
+   docs/page.rst
 
 
 Indices and tables
