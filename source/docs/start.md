@@ -209,28 +209,28 @@ sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮
 ```
               
 ### KEIL IDE使用
-#### 1. 创建工程
+#### 1.创建工程
 1. 新建一个`SGL_STM32F103`目录，然后创建一个`sgl`目录，然后将`sgl`源码的`source`目录下的所有文件复制到`SGL_STM32F103/sgl/`目录下。      
-    ![alt text](imgs/mdk5/image-1.png){width=400}
+    ![alt text](imgs/mdk5/image-1.png)
 
 2. 打开`MDK5`软件，新建一个名为`SGL_STM32F103`的工程，保存到`SGL_STM32F103`目录下，点击【保存】。      
-    ![alt text](imgs/mdk5/img-2.jpg){width=400}
+    ![alt text](imgs/mdk5/img-2.jpg)
 
 
 3. 此时会进入芯片选择界面，然后选择STM32F103C8芯片，点击【OK】      
-    ![alt text](imgs/mdk5/img-3.jpg){width=400}
+    ![alt text](imgs/mdk5/img-3.jpg)
 
 4. 此时会进入`Manage Run-Time Environment`界面，勾选`CMSIS`和`Startup`，然后点击【OK】。       
-    ![alt text](imgs/mdk5/img-4.jpg){width=400}
+    ![alt text](imgs/mdk5/img-4.jpg)
 
 5. 点击文件扩展管理器:      
-    ![alt text](imgs/mdk5/img-5.jpg){width=400}
+    ![alt text](imgs/mdk5/img-5.jpg)
 
     然后新建`sgl`和`example`目录结构，然后在`sgl`结构中，将`sgl/core/`目录下所有c文件添加，将`sgl/draw/`目录下所有c文件添加，将`sgl/fonts/`目录下所有c文件添加，将`sgl/source/mm/lwmem/`目录下的所有c文件添加，将`sgl/source/widgets/`目录下的所有文件添加，添加完毕后，目录结构如下：           
-    ![alt text](imgs/mdk5/img-6.jpg){width=400}
+    ![alt text](imgs/mdk5/img-6.jpg)
 
 6. 新建一个`main.c`文件，然后保存到`example`文件夹下：            
-    ![alt text](imgs/mdk5/img-7.jpg){width=400}
+    ![alt text](imgs/mdk5/img-7.jpg)
 
     然后输入如下代码：          
     ```c
@@ -239,7 +239,7 @@ sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮
 
     #define  PANEL_WIDTH    240
     #define  PANEL_HEIGHT   240
-    sgl_color_t panel_buffer[PANEL_WIDTH * 1];
+    sgl_color_t panel_buffer[PANEL_WIDTH * 10];
 
     /* 系统时钟中断服务函数，设置为1ms中断一次 */
     void systick_handler(void)
@@ -247,11 +247,12 @@ sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮
         sgl_tick_inc(1);
     }
 
-    void demo_panel_flush_area(int16_t x, int16_t y, int16_t w, int16_t h, sgl_color_t *src)
+    bool demo_panel_flush_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2, sgl_color_t *src)
     {
         /* set flush windows address */
-        //tft_set_win(x, y, x + w - 1, y + h - 1);    
-        //SPI1_WriteMultByte((uint8_t*)src, w * h * 2);
+        tft_set_win(x1, y1, x2, y2);    
+        SPI1_WriteMultByte((uint8_t*)src, (x2 - x1 + 1) * (y2 - y1 + 1) * sizeof(sgl_color_t));
+        return true;
     }
 
     void UART1_SendString(const char *str)
@@ -294,40 +295,39 @@ sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮
 
 7. 编辑`sgl_config.h`文件，修改内容如下：
     ```c
-    #define  CONFIG_SGL_PANEL_PIXEL_DEPTH                      16
-    #define  CONFIG_SGL_EVENT_QUEUE_SIZE                       16
-    #define  CONFIG_SGL_SYSTICK_MS                             10
-    #define  CONFIG_SGL_DIRTY_AREA_THRESHOLD                   64
-    #define  CONFIG_SGL_COLOR16_SWAP                           0   
-    #define  CONFIG_SGL_ANIMATION                              0
-    #define  CONFIG_SGL_DEBUG                                  0
-    #define  CONFIG_SGL_LOG_COLOR                              1
-    #define  CONFIG_SGL_LOG_LEVEL                              0
-    #define  CONFIG_SGL_TEXT_UTF8                              0
-    #define  CONFIG_SGL_OBJ_USE_NAME                           0
-    #define  CONFIG_SGL_USE_STYLE_UNIFIED_API                  1
-    #define  CONFIG_SGL_BOOT_LOGO                              0
-    #define  CONFIG_SGL_BOOT_ANIMATION                         0
-    #define  CONFIG_SGL_HEAP_ALGO                              lwmem
-    #define  CONFIG_SGL_FL_INDEX_MAX                           20
-    #define  CONFIG_SGL_HEAP_MEMORY_SIZE                       10240
-    #define  CONFIG_SGL_FONT_SONG23                            1
-    #define  CONFIG_SGL_FONT_CONSOLAS23                        0
-    #define  CONFIG_SGL_FONT_KAI33                             0
-    #define  CONFIG_SGL_FONT_CONSOLAS14                        0
+    #define    CONFIG_SGL_PANEL_PIXEL_DEPTH       16          //颜色深度，这里是16位，即RGB565
+    #define    CONFIG_SGL_SYSTICK_MS              10          //SGL图形刷新事件间隔，这里设置为10ms
+    #define    CONFIG_SGL_EVENT_QUEUE_SIZE        16          //事件队列大小，这里设置为16
+    #define    CONFIG_SGL_DIRTY_AREA_NUM_MAX      16          //脏区域最大数量，这里设置为16
+    #define    CONFIG_SGL_ANIMATION               1           //是否启用动画，这里启用动画
+    #define    CONFIG_SGL_DEBUG                   1           //是否启用日志，这里启用日志，项目发布时，请关闭日志
+    #define    CONFIG_SGL_LOG_COLOR               1           //是否启用日志颜色，这里启用日志颜色
+    #define    CONFIG_SGL_LOG_LEVEL               0           //日志等级，0为全部输出，1为错误输出，2为警告输出，3为信息输出，4为调试输出
+    #define    CONFIG_SGL_OBJ_USE_NAME            0           //是否启用对象名称，这里不启用对象名称
+    #define    CONFIG_SGL_FONT_COMPRESSED         1           //是否启用字体压缩，这里启用字体压缩
+    #define    CONFIG_SGL_BOOT_LOGO               0           ///是否启用启动logo，这里不启用启动logo
+    #define    CONFIG_SGL_BOOT_ANIMATION          0           //是否启用启动动画，这里不启用启动动画
+    #define    CONFIG_SGL_HEAP_ALGO               lwmem       //内存管理算法，这里选择lwmem
+    #define    CONFIG_SGL_HEAP_MEMORY_SIZE        10240       //内存大小，这里设置为10KB
+    #define    CONFIG_SGL_FONT_SONG23             0           //是否启用宋体23号字体, 默认关闭
+    #define    CONFIG_SGL_FONT_CONSOLAS14         0           //是否启用Consolas14号字体, 默认关闭
+    #define    CONFIG_SGL_FONT_CONSOLAS23         0           //是否启用Consolas23号字体, 默认关闭
+    #define    CONFIG_SGL_FONT_CONSOLAS24         1           //是否启用Consolas24号字体, 默认开启
+    #define    CONFIG_SGL_FONT_CONSOLAS32         0           //是否启用Consolas32号字体, 默认关闭
+    #define    CONFIG_SGL_FONT_CONSOLAS24_COMPRESS     1      //是否启用Consolas24号字体压缩，这里启用字体压缩
     ```
-#### 配置编译选项
+#### 2.配置编译选项
 1. 打开`Options for Target`窗口，然后找到`Target`选项:             
-    ![alt text](imgs/mdk5/img-8.jpg){width=400}
+    ![alt text](imgs/mdk5/img-8.jpg)
 
     选择`V6`版本编译器
 2. 点击`C/C++(AC6)`选项`，然后选择如下配置：              
-    ![alt text](imgs/mdk5/img-9.jpg){width=400}
+    ![alt text](imgs/mdk5/img-9.jpg)
 
    然后添加头文件路径，将`sgl/include`添加到`Include Path`中，将`sgl`目录添加到`Include Path`中。                   
-    ![alt text](imgs/mdk5/img-10.jpg){width=400}
+    ![alt text](imgs/mdk5/img-10.jpg)
 
-#### 创建一个简单的demo
+#### 3.创建一个简单的demo
 在`main.c`中添加如下代码：
 ```c
 int main(void)
@@ -354,6 +354,11 @@ int main(void)
 然后点击编译按钮，编译成功后，烧录到开发板中即可。    
 ![alt text](imgs/mdk5/img-11.jpg)
 
+```{note}
+如果发现颜色显示不正确，请将查看屏幕驱动芯片手册，是否存在16位颜色交换模式，如果存在，可以使用下面两种方式任意一种解决：
+1. 修改`sgl_config.h`文件，将`CONFIG_SGL_COLOR16_SWAP`定义为1，使用软件交换颜色
+2. 查看屏幕驱动芯片手册，设置16位颜色交换模式。
+```
 
 ### Linux FB平台
 
