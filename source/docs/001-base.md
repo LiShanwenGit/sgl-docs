@@ -75,7 +75,7 @@ void sgl_obj_move_background(sgl_obj_t *obj);
 ```
 
 ### 立刻更新屏幕
-SGL的屏幕刷新机制是异步的，当用户创建一个控件时，该控制仅仅是添加到了SGL的系统控件树中，并不会立刻刷新，必须等SGL系统滴答时钟触发时，才会刷新屏幕。如果用户此时需要立刻更新屏幕，可以使用sgl_task_handle_sync函数，函数原型如下：
+SGL的屏幕刷新机制是异步的，当用户创建一个控件时，该控件仅仅是添加到了SGL的系统控件树中，并不会立刻刷新，必须等SGL系统滴答时钟触发时，才会刷新屏幕。如果用户此时需要立刻更新屏幕，可以使用sgl_task_handle_sync函数，函数原型如下：
 ```c
 void sgl_task_handle_sync(void);
 ```

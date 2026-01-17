@@ -72,7 +72,8 @@ source
 #ifndef  __CONFIG_H__
 #define  __CONFIG_H__
 
-#define    CONFIG_SGL_PANEL_PIXEL_DEPTH       16          //颜色深度，这里是16位，即RGB565
+#define    CONFIG_SGL_FBDEV_PIXEL_DEPTH       16          //颜色深度，这里是16位，即RGB565
+#define    CONFIG_SGL_FBDEV_ROTATION          0           //屏幕旋转角度，软件旋转，这里设置为0度，即不做旋转
 #define    CONFIG_SGL_SYSTICK_MS              10          //SGL图形刷新事件间隔，这里设置为10ms
 #define    CONFIG_SGL_EVENT_QUEUE_SIZE        16          //事件队列大小，这里设置为16
 #define    CONFIG_SGL_DIRTY_AREA_NUM_MAX      16          //脏区域最大数量，这里设置为16
@@ -108,14 +109,15 @@ source
 
 static sgl_color_t panel_buffer[PANEL_WIDTH * 10];
 
-bool panel_flush_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2, sgl_color_t *src)
+void panel_flush_area(sgl_area_t *area, sgl_color_t *src)
 {
-    uint16_t w = x2 - x1 + 1;
-    uint16_t h = y2 - y1 + 1;
-    tft_set_win(x1, y1, x2, y2);
+    uint16_t w = area->x2 - area->x1 + 1;
+    uint16_t h = area->y2 - area->y1 + 1;
+    tft_set_win(area->x1, area->y1, area->x2, area->y2);
 	GPIO_WriteBit(SPI_DC_PORT, SPI_DC_PIN, 1);
-	SPI1_WriteMultByte((uint8_t*)src, w * h * 2);
-    return true;
+	SPI1_WriteMultByte((uint8_t*)src, w * h * sizeof(sgl_color_t));
+    /* 调用sgl_fbdev_flush_ready()函数，告诉SGL框架，刷新完成，可以继续处理下一帧处理 */ 
+    sgl_fbdev_flush_ready();
 }
 
 void uart_put_string(const char *str)
@@ -131,20 +133,18 @@ void SysTick_Handler(void)
 
 int main(void)
 {
-    sgl_device_fb_t fb_dev = {
+    sgl_fbinfo_t fbinfo = {
         .xres = PANEL_WIDTH,
         .yres = PANEL_HEIGHT,
-        .xres_virtual = PANEL_WIDTH,
-        .yres_virtual = PANEL_HEIGHT,
         .flush_area = panel_flush_area,
         .buffer[0] = panel_buffer,
         .buffer_size = SGL_ARRAY_SIZE(panel_buffer), 
     };
 
-    // 注册Framebuffer设备
-    sgl_device_fb_register(&fb_dev);
     // 注册日志设备，可选
-    sgl_device_log_register(uart_put_string);
+    sgl_logdev_register(uart_put_string);
+    // 注册Framebuffer设备
+    sgl_fbdev_register(&fbinfo);
 
     tft_init();
 
@@ -166,20 +166,19 @@ int main(void)
 ```
 上面的过程中定义了一个sgl_device_fb_t结构体，并且初始化了一些主要的参数，参数的含义如下： 
 - `xres`: 屏幕的宽度          
-- `yres`: 屏幕的高度            
-- `xres_virtual`: 屏幕的虚拟宽度     
-- `yres_virtual`: 屏幕的虚拟高度       
+- `yres`: 屏幕的高度                
 - `flush_area`：刷新区域函数，用于刷新指定区域           
 - `buffer[0]`：帧缓冲区指针，指向帧缓冲区地址处，如何需要双帧缓冲区，则需要设置`buffer[1]`        
 - `buffer_size`：帧缓冲区大小，单位：缓冲区中像素点的个数          
            
 panel_flush_area函数用于刷新指定区域，参数为：
-- `x1`：区域左上角X坐标
-- `y1`：区域左上角Y坐标
-- `x2`：区域右下角X坐标
-- `y2`：区域右下角Y坐标
+- `area`：区域结构体指针，包含区域左上角和右下角的坐标
+    `x1`：区域左上角X坐标
+    `y1`：区域左上角Y坐标
+    `x2`：区域右下角X坐标
+    `y2`：区域右下角Y坐标
 - `src`：区域数据指针
-- `return`：发送完成返回true，发送未完成返回false
+panel_flush_area函数必须调用sgl_fbdev_flush_ready()函数，用来告诉SGL框架，刷新完成，可以继续处理下一帧处理。
 
 ```{tip}
 如果没有使用DMA发送数据，则直接返回true即可，如果使用DMA发送数据，则需要先检测下DMA是否空闲，如果是空闲的，则发送数据后，返回true，如果DMA未空闲，则返回false。
@@ -187,20 +186,24 @@ panel_flush_area函数用于刷新指定区域，参数为：
 使用DMA发送数据：   
 
 ```c
-bool panel_flush_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2, sgl_color_t *src)            
-{             
-    if (DMA_IS_BUSY()) {          
-        return false;        
-    }              
-    DMA_SendData(src, (x2 - x1 + 1) * (y2 - y1 + 1)* sizeof(sgl_color_t));          
-    return true;            
-}  
+void dma_complete_handler(void)
+{
+    sgl_fbdev_flush_ready();
+}
+
+void panel_flush_area(sgl_area_t *area, sgl_color_t *src)          
+{
+    if (DMA_IS_BUSY()) {
+        return;
+    }
+    DMA_SendData(src, (x2 - x1 + 1) * (y2 - y1 + 1)* sizeof(sgl_color_t));        
+}
 ```
 当然，对于使用DMA发送数据时，请使用双缓冲，即添加一个缓冲区，即`buffer[1]`，大小和`buffer[0]`一样，即`buffer_size`
                   
 编译后，烧录到开发板上，即可看到屏幕显示“Hello SGL!”，整个移植主要只有四件事：    
-- 1. 调用sgl_device_fb_register()函数注册FB设备      
-- 2. 调用sgl_device_log_register()函数注册日志设备，可选        
+- 1. 调用sgl_fbdev_register()函数注册FB设备      
+- 2. 调用sgl_logdev_register()函数注册日志设备，可选        
 - 3. 调用sgl_init()函数初始化SGL框架       
 - 4. 在滴答中断中调用sgl_tick_inc()函数，定时为1ms    
        
@@ -247,12 +250,13 @@ sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮
         sgl_tick_inc(1);
     }
 
-    bool demo_panel_flush_area(int16_t x1, int16_t y1, int16_t x2, int16_t y2, sgl_color_t *src)
+    void demo_panel_flush_area(sgl_area_t *area, sgl_color_t *src)
     {
         /* set flush windows address */
-        tft_set_win(x1, y1, x2, y2);    
-        SPI1_WriteMultByte((uint8_t*)src, (x2 - x1 + 1) * (y2 - y1 + 1) * sizeof(sgl_color_t));
-        return true;
+        tft_set_win(area->x1, area->y1, area->x2, area->y2);    
+        SPI1_WriteMultByte((uint8_t*)src, (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1) * sizeof(sgl_color_t));
+        /* 调用sgl_fbdev_flush_ready()函数，告诉SGL框架，刷新完成，可以继续处理下一帧处理 */ 
+        sgl_fbdev_flush_ready();
     }
 
     void UART1_SendString(const char *str)
@@ -266,18 +270,17 @@ sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮
 
     int main(void)
     {
-        sgl_device_fb_t fb_dev = {
+        sgl_fbinfo_t fbinfo = {
             .xres = PANEL_WIDTH,
             .yres = PANEL_HEIGHT,
-            .xres_virtual = PANEL_WIDTH,
-            .yres_virtual = PANEL_HEIGHT,
-            .flush_area = demo_panel_flush_area,
+            .flush_area = panel_flush_area,
             .buffer[0] = panel_buffer,
-            .buffer_size = SGL_ARRAY_SIZE(panel_buffer),
+            .buffer_size = SGL_ARRAY_SIZE(panel_buffer), 
         };
-
-        sgl_device_fb_register(&fb_dev);
-        sgl_device_log_register(UART1_SendString);
+        // 注册日志设备，可选
+        sgl_logdev_register(UART1_SendString);
+        // 注册Framebuffer设备
+        sgl_fbdev_register(&fbinfo);
 
         //USART1_GPIO_Config();
         //USART1_Config();
@@ -295,7 +298,8 @@ sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮
 
 7. 编辑`sgl_config.h`文件，修改内容如下：
     ```c
-    #define    CONFIG_SGL_PANEL_PIXEL_DEPTH       16          //颜色深度，这里是16位，即RGB565
+    #define    CONFIG_SGL_FBDEV_PIXEL_DEPTH       16          //颜色深度，这里是16位，即RGB565
+    #define    CONFIG_SGL_FBDEV_ROTATION          0           //屏幕旋转角度，软件旋转，这里设置为0度，即不做旋转
     #define    CONFIG_SGL_SYSTICK_MS              10          //SGL图形刷新事件间隔，这里设置为10ms
     #define    CONFIG_SGL_EVENT_QUEUE_SIZE        16          //事件队列大小，这里设置为16
     #define    CONFIG_SGL_DIRTY_AREA_NUM_MAX      16          //脏区域最大数量，这里设置为16
