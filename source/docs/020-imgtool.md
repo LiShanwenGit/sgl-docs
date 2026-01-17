@@ -3,6 +3,6 @@
 <iframe 
     src="../_static/image_conv_tool.html" 
     width="100%" 
-    height="1500px" 
+    height="1400px" 
     frameborder="0">
 </iframe>
