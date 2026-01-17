@@ -370,9 +370,14 @@ SGL支持触摸屏，用户可以使用触摸屏来控制SGL的控件，例如�
 /* 定时轮询函数，一般设置10~30ms */
 void touch_timer_handle(void)
 {
-    bool pressed = false;
+    bool pressed;
+    int16_t x, y;
+
     /* 获取触摸屏的坐标和是否按下 */
     pressed = touch_get_pressed();
+    x = touch_get_x();
+    y = touch_get_y();
+
     /* 调用SGL的触摸事件处理函数 */
     sgl_event_pos_input(x, y, pressed);
 }
