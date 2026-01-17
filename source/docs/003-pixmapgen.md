@@ -9,6 +9,6 @@ ext_img控件即扩展图片控件的pixmap支持RGB332, RGB565，RGB888，并�
 <iframe 
     src="../_static/image_conv_tool.html" 
     width="100%" 
-    height="2000px" 
+    height="1400px" 
     frameborder="0">
 </iframe>
