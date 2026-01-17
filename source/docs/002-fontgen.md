@@ -19,8 +19,8 @@
 ### 字体使用
 例如我生成的字体文件名为font.c，这个文件的内容如下：    
 ![alt text](imgs/fontgen/img-7.jpg)    
-![alt text](imgs/fontgen/img-8.jpg)    
-将生成的字体文件复制到SGL中，然后打开sgl_config.h文件，新定义一个CONFIG_SGL_FONT_MISANS_MEDIUM_24宏定义，并设置为1   
+![alt text](imgs/fontgen/img-8.jpg)            
+将生成的字体文件复制到SGL中，然后打开sgl_config.h文件，新定义一个CONFIG_SGL_FONT_MISANS_MEDIUM_24宏定义，并设置为1    
 ![alt text](imgs/fontgen/img-9.jpg)   
 在你的项目中，使用如下来设置字体：   
 ```c
