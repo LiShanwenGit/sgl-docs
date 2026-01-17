@@ -34,6 +34,8 @@ SGL UI库特点:
    docs/006-led.md
    docs/007-switch.md
    docs/008-extimg.md
+   docs/009-msgbox.md
+   docs/010-line.md
    docs/020-imgtool.md
 
 QQ交流群
