@@ -1,4 +1,4 @@
-## Switch控件
+## switch控件
 ### 创建Switch控件
 创建一个Button控件，使用如下代码：
 ```c

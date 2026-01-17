@@ -1,5 +1,5 @@
-## Button控件
-创建一个Button控件，使用如下代码：
+## button控件
+创建一个button控件，使用如下代码：
 ```c
 sgl_obj_t *button = sgl_button_create(NULL);
 sgl_obj_set_pos(button, 250, 100);

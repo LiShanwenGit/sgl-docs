@@ -1,4 +1,4 @@
-## Label控件
+## label控件
 ### 创建基本Label控件
 下面是一个创建Label控件的例子：
 ```c

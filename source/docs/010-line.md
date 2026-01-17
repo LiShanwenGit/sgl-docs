@@ -1,4 +1,4 @@
-## Line控件
+## line控件
 line控件用于显示线，使用如下代码：
 ```c
 sgl_obj_t *line = sgl_line_create(NULL);
