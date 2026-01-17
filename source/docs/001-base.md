@@ -58,17 +58,17 @@ sgl_obj_delete(btn);
 
 ### 控件层级设置
 SGL的所有控件不仅仅有父子关系，还有层级关系，即控件的绘制顺序，对于兄弟控件，即父控件下的多个控件，绘制顺序是先绘制先创建的控件，再绘制后创建的控件，从视觉上来说，如果存在重叠，则后创建的控件会覆盖先创建的控件。
-用户可以使用sgl_obj_move_up, sgl_obj_move_down, sgl_obj_move_foreground, sgl_obj_move_background函数来设置控件的层级关系，函数原型如下：
+用户可以使用sgl_obj_move_up, sgl_obj_move_down, sgl_obj_move_top, sgl_obj_move_bottom函数来设置控件的层级关系，函数原型如下：
 ```c
 void sgl_obj_move_up(sgl_obj_t *obj);
 void sgl_obj_move_down(sgl_obj_t *obj);
-void sgl_obj_move_foreground(sgl_obj_t *obj);
-void sgl_obj_move_background(sgl_obj_t *obj);
+void sgl_obj_move_top(sgl_obj_t *obj);
+void sgl_obj_move_bottom(sgl_obj_t *obj);
 ```
 - sgl_obj_move_up函数用于将控件上移一个层级
 - sgl_obj_move_down函数用于将控件下移一个层级
-- sgl_obj_move_foreground函数用于将控件移到最上层
-- sgl_obj_move_background函数用于将控件移到最下层
+- sgl_obj_move_top函数用于将控件移到最上层
+- sgl_obj_move_bottom函数用于将控件移到最下层
 
 ```{note}
 上面的函数只能对控件的层级关系有效，不会改变控件的父子关系。如果控件A和控件B的父控件是同一个，则上面的函数是有效的，否则无效。

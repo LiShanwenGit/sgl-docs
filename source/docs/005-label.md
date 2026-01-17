@@ -10,3 +10,5 @@ sgl_label_set_font(label, &consolas24);
 /* 设置文本 */
 sgl_label_set_text(label, "label test");
 ```
+效果如下：
+![alt text](imgs/label/img-1.jpg)
