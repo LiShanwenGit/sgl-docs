@@ -45,7 +45,6 @@ void flash_port_read_data_from_flash(uint8_t *addr, uint8_t *buf, uint32_t len)
 ### 设置多张图片实现gif效果
 如果使用多张图片，则在使用取模工具时，请选择多个图片，并且目前仅支持多个图片的大小一样的情况，例如下面这样：      
 选择两张大小一样的图片：            
-
 ![alt text](imgs/ext_img/img-2.jpg)       
 选后的效果如下：    
 
@@ -84,4 +83,5 @@ sgl_ext_img_set_pixmap_num(ext_img, 2, true);
 
 ```{note}
 如果你没有设置的自动切换下一张图片，那么你就可以使用sgl_ext_img_set_next_pixmap()函数来切换下一张图片，这样你可以在你的定时器或者动画中调用该函数来切换图片。
+注意: 图片最大数量只能支持255张
 ```
