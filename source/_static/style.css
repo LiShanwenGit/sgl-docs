@@ -1,3 +1,9 @@
 .wy-nav-content {
     max-width: none;
 }
+
+img {
+    max-width: 400px;
+    height: auto !important;  /* 强制等比缩放 */
+    margin: 10px 0;  /* 上下边距 */
+}
