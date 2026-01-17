@@ -16,7 +16,7 @@
     ![alt text](imgs/fontgen/img-6.jpg)    
 8. 滚动到最后，点击【开始转换】，即可生成.c字体文件，生成的字体在刚才选择的输出文件夹中    
 
-### 字体使用
+## 使用新生成的字体
 例如我生成的字体文件名为font.c，这个文件的内容如下：    
 ![alt text](imgs/fontgen/img-7.jpg)    
 ![alt text](imgs/fontgen/img-8.jpg)            
