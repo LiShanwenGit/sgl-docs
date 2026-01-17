@@ -23,7 +23,7 @@
 ```
 
 ### MCU平台
-1. 下载SGL发布版本代码：[SGL 20260101.zip](https://github.com/sgl-org/sgl/archive/refs/tags/20260101.zip)
+1. 下载SGL发布版本代码：[SGL_20260117.zip](https://github.com/sgl-org/sgl/archive/refs/tags/20260117.zip)
 2. 解压后如下文件结构：
 ```
 source
