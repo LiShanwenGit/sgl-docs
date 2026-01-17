@@ -363,3 +363,17 @@ int main(void)
 2. 查看屏幕驱动芯片手册，设置16位颜色交换模式。
 ```
 
+### 触摸屏支持
+SGL支持触摸屏，用户可以使用触摸屏来控制SGL的控件，例如点击按钮，滑动列表等等。触摸的底层对接有两种方式，一种是使用中断，一种是使用定时轮询，这里以定时轮询为例说明。
+1. 在定时轮询函数中添加如下代码：
+```c
+/* 定时轮询函数，一般设置10~30ms */
+void touch_timer_handle(void)
+{
+    bool pressed = false;
+    /* 获取触摸屏的坐标和是否按下 */
+    pressed = touch_get_pressed();
+    /* 调用SGL的触摸事件处理函数 */
+    sgl_event_pos_input(x, y, pressed);
+}
+```
