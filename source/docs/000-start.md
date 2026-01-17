@@ -341,12 +341,11 @@ int main(void)
     ...
 
     /* 添加一个按钮 */
-    sgl_obj_t *button = sgl_button_create(NULL);
-    sgl_obj_set_pos(button, 20, 20);
-    sgl_obj_set_size(button, 200, 100);
-    sgl_obj_set_style(button, SGL_STYLE_RADIUS, 50);
-    sgl_obj_set_style(button, SGL_STYLE_BORDER_WIDTH, 2);
-    sgl_obj_set_style(button, SGL_STYLE_BORDER_COLOR, SGL_COLOR(SGL_BLACK));
+    sgl_obj_t *label = sgl_label_create(NULL);
+    sgl_obj_set_size(label, PANEL_WIDTH, 30);
+    sgl_obj_set_pos_align(label, SGL_ALIGN_CENTER);
+    sgl_label_set_font(label, &consolas24);
+    sgl_label_set_text(label, "Hello SGL!");
 
     while(1) {
         sgl_task_handle();
@@ -363,3 +362,4 @@ int main(void)
 1. 修改`sgl_config.h`文件，将`CONFIG_SGL_COLOR16_SWAP`定义为1，使用软件交换颜色
 2. 查看屏幕驱动芯片手册，设置16位颜色交换模式。
 ```
+

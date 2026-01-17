@@ -30,6 +30,7 @@ SGL UI库特点:
    docs/002-fontgen.md
    docs/003-pixmapgen.md
    docs/004-button.md
+   docs/005-label.md
    docs/020-imgtool.md
 
 QQ交流群
