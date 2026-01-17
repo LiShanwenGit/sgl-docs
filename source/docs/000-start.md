@@ -114,8 +114,8 @@ void panel_flush_area(sgl_area_t *area, sgl_color_t *src)
     uint16_t w = area->x2 - area->x1 + 1;
     uint16_t h = area->y2 - area->y1 + 1;
     tft_set_win(area->x1, area->y1, area->x2, area->y2);
-	GPIO_WriteBit(SPI_DC_PORT, SPI_DC_PIN, 1);
-	SPI1_WriteMultByte((uint8_t*)src, w * h * sizeof(sgl_color_t));
+    GPIO_WriteBit(SPI_DC_PORT, SPI_DC_PIN, 1);
+    SPI1_WriteMultByte((uint8_t*)src, w * h * sizeof(sgl_color_t));
     /* 调用sgl_fbdev_flush_ready()函数，告诉SGL框架，刷新完成，可以继续处理下一帧处理 */ 
     sgl_fbdev_flush_ready();
 }
