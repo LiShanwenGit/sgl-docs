@@ -32,6 +32,7 @@ SGL UI库特点:
    docs/004-button.md
    docs/005-label.md
    docs/006-led.md
+   docs/007-switch.md
    docs/020-imgtool.md
 
 QQ交流群
