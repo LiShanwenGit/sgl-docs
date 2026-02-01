@@ -23,7 +23,7 @@
 ```
 
 ### MCU平台
-1. 下载SGL发布版本代码：[SGL_20260118.zip](https://github.com/sgl-org/sgl/archive/refs/tags/20260118.zip)
+1. 下载SGL发布版本代码：[SGL_20260201.zip](https://github.com/sgl-org/sgl/archive/refs/tags/20260201.zip)
 2. 解压后如下文件结构：
 ```
 source
@@ -67,13 +67,16 @@ source
 
 ```
 3. 将SGL的所有代码拷贝到MCU的工程文件中，并添加所有文件，注意：对于mm目录下的文件，只需要添加lwmem目录下的文件，如果你的项目中已经有动态内存管理函数，则不需要添加mm目录下的文件，自己定义`sgl_mm_init`，`sgl_malloc`，`sgl_free`函数即可。
-4. 添加SGL的所有文件后，请修改`sgl_config.h`文件，用于适配你的MCU平台，下面是一个示例：
+4. 将sgl源码的sgl.h文件所在的目录添加到编译的头文件路径中
+5. 将sgl源码的include目录添加到编译的头文件中路径中
+6. 添加SGL的所有文件后，请修改`sgl_config.h`文件，用于适配你的MCU平台，下面是一个示例：
 ```c
 #ifndef  __CONFIG_H__
 #define  __CONFIG_H__
 
 #define    CONFIG_SGL_FBDEV_PIXEL_DEPTH       16          //颜色深度，这里是16位，即RGB565
 #define    CONFIG_SGL_FBDEV_ROTATION          0           //屏幕旋转角度，软件旋转，这里设置为0度，即不做旋转
+#define    CONFIG_SGL_FBDEV_RUNTIME_ROTATION  0           //屏幕实时旋转角度
 #define    CONFIG_SGL_SYSTICK_MS              10          //SGL图形刷新事件间隔，这里设置为10ms
 #define    CONFIG_SGL_EVENT_QUEUE_SIZE        16          //事件队列大小，这里设置为16
 #define    CONFIG_SGL_DIRTY_AREA_NUM_MAX      16          //脏区域最大数量，这里设置为16
@@ -99,7 +102,7 @@ source
 ```{tip}
 在刚开始移植SGL时，最好开启`CONFIG_SGL_DEBUG`这个值，这样可以使用串口输出调试日志，如果出现问题，可以快速定位原因。
 ```
-5. 对接屏幕底层驱动代码
+7. 对接屏幕底层驱动代码
 在你的main函数中添加如下代码：
 ```c
 #include "sgl.h"
