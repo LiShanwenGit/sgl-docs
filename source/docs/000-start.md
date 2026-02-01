@@ -196,9 +196,6 @@ void dma_complete_handler(void)
 
 void panel_flush_area(sgl_area_t *area, sgl_color_t *src)          
 {
-    if (DMA_IS_BUSY()) {
-        return;
-    }
     DMA_SendData(src, (x2 - x1 + 1) * (y2 - y1 + 1)* sizeof(sgl_color_t));        
 }
 ```
@@ -383,5 +380,34 @@ void touch_timer_handle(void)
 
     /* 调用SGL的触摸事件处理函数 */
     sgl_event_pos_input(x, y, pressed);
+}
+```
+
+### DMA双缓冲支持
+SGL支持DMA双缓冲，用户可以使用DMA来提高图形刷新效率，用户需要使用双缓冲来避免屏幕闪烁，如下方式可使用双缓冲：
+```c
+sgl_color_t panel_buffer1[PANEL_WIDTH * 10];
+sgl_color_t panel_buffer2[PANEL_WIDTH * 10];
+
+sgl_fbinfo_t fbinfo = {
+    .xres = PANEL_WIDTH,
+    .yres = PANEL_HEIGHT,
+    .flush_area = panel_flush_area,
+    .buffer[0] = panel_buffer1,
+    .buffer[1] = panel_buffer2,
+    .buffer_size = SGL_ARRAY_SIZE(panel_buffer1), 
+};
+```
+上面的代码中，panel_buffer1和panel_buffer2是双缓冲，并且panel_buffer1和panel_buffer2的buffer_size必须一致，buffer_size为缓冲区大小，这里设置为10行，即10行数据。        
+并且sgl_fbdev_flush_ready()函数在DMA完成中断处理函数中调用，如下代码：
+```c
+void dma_complete_handler(void)
+{
+    sgl_fbdev_flush_ready();
+}
+
+void panel_flush_area(sgl_area_t *area, sgl_color_t *src)          
+{
+    DMA_SendData_nowait(src, (x2 - x1 + 1) * (y2 - y1 + 1)* sizeof(sgl_color_t));        
 }
 ```
