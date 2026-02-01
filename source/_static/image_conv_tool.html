@@ -185,6 +185,18 @@
             box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
+        /* 棋盘格背景样式 */
+        .chessboard-bg {
+            background-image:
+                linear-gradient(45deg, #ccc 25%, transparent 25%),
+                linear-gradient(-45deg, #ccc 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #ccc 75%),
+                linear-gradient(-45deg, transparent 75%, #ccc 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            background-color: #f0f0f0;
+        }
+
         #previewImage {
             max-width: 100%;
             max-height: 100%;
@@ -501,35 +513,25 @@
 
                         <!-- 原图预览 -->
                         <div style="margin-top: 15px;">
-                            <h4 style="margin-bottom: 5px; color: #666;">原图预览</h4>
-                            <div style="position: relative; border-radius: 8px; overflow: hidden; background: #000;">
-                                <!-- 滚动按钮 -->
-                                <button class="scroll-btn scroll-left" style="position: absolute; left: 5px; top: 50%; transform: translateY(-50%); background: linear-gradient(135deg, rgba(79, 172, 254, 0.8), rgba(0, 242, 254, 0.8)); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; opacity: 0;">
-                                    ◀
-                                </button>
-                                <button class="scroll-btn scroll-right" style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: linear-gradient(135deg, rgba(79, 172, 254, 0.8), rgba(0, 242, 254, 0.8)); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; opacity: 0;">
-                                    ▶
-                                </button>
-                                <!-- 图片容器 -->
-                                <div class="preview-scroll-container" style="display: flex; overflow: hidden; height: 150px;">
-                                    <div class="preview-images" style="display: flex; transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);"></div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <h4 style="color: #666; margin: 0;">原图预览</h4>
+                                <div style="display: flex; gap: 5px;">
+                                    <button class="center-canvas-btn" style="background: rgba(79, 172, 254, 0.8); color: white; border: none; border-radius: 4px; padding: 2px 8px; font-size: 10px; cursor: pointer; transition: all 0.3s ease;">居中画布</button>
+                                    <button class="delete-all-btn" style="background: rgba(220, 53, 69, 0.8); color: white; border: none; border-radius: 4px; padding: 2px 8px; font-size: 10px; cursor: pointer; transition: all 0.3s ease;">删除所有</button>
+                                </div>
+                            </div>
+                            <div style="position: relative; border-radius: 8px; overflow: hidden; height: 150px;" class="chessboard-bg">
+                                <div class="preview-canvas-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden;">
+                                    <div class="preview-images" style="position: absolute; top: 0; left: 0; display: grid; grid-template-columns: repeat(9, auto); gap: 8px; padding: 10px; transform-origin: center; transition: transform 0.1s ease;"></div>
                                 </div>
                             </div>
                         </div>
                         <!-- 输出预览 -->
                         <div style="margin-top: 15px;">
                             <h4 style="margin-bottom: 5px; color: #666;">输出预览</h4>
-                            <div style="position: relative; border-radius: 8px; overflow: hidden; background: #000;">
-                                <!-- 滚动按钮 -->
-                                <button class="scroll-btn scroll-left" style="position: absolute; left: 5px; top: 50%; transform: translateY(-50%); background: linear-gradient(135deg, rgba(79, 172, 254, 0.8), rgba(0, 242, 254, 0.8)); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; opacity: 0;">
-                                    ◀
-                                </button>
-                                <button class="scroll-btn scroll-right" style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: linear-gradient(135deg, rgba(79, 172, 254, 0.8), rgba(0, 242, 254, 0.8)); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; opacity: 0;">
-                                    ▶
-                                </button>
-                                <!-- 图片容器 -->
-                                <div class="preview-scroll-container" style="display: flex; overflow: hidden; height: 150px;">
-                                    <div class="output-preview-images" style="display: flex; transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);"></div>
+                            <div style="position: relative; border-radius: 8px; overflow: hidden; height: 150px;" class="chessboard-bg">
+                                <div class="preview-canvas-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden;">
+                                    <div class="output-preview-images" style="position: absolute; top: 0; left: 0; display: grid; grid-template-columns: repeat(9, auto); gap: 8px; padding: 10px; transform-origin: center; transition: transform 0.1s ease;"></div>
                                 </div>
                             </div>
                         </div>
@@ -601,6 +603,8 @@
                             <option value="rgb888">RGB888</option>
                             <option value="rgb565">RGB565</option>
                             <option value="rgb332">RGB332</option>
+                            <option value="argb8888">ARGB8888</option>
+                            <option value="argb4444">ARGB4444</option>
                         </select>
                     </div>
                     <div class="select-group">
@@ -619,14 +623,8 @@
                     </div>
                     <div class="select-group">
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="checkbox" id="rgb888ReverseOrder" checked style="width: 18px; height: 18px; margin: 0; cursor: pointer;">
-                            <span>RGB888反字序</span>
-                        </div>
-                    </div>
-                    <div class="select-group">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <input type="checkbox" id="rgb565LittleEndian" checked style="width: 18px; height: 18px; margin: 0; cursor: pointer;">
-                            <span>RGB565反字序</span>
+                            <input type="checkbox" id="reverseOrder" checked style="width: 18px; height: 18px; margin: 0; cursor: pointer;">
+                            <span>反字序</span>
                         </div>
                     </div>
                     <div class="select-group">
@@ -637,6 +635,7 @@
                             <div id="colorPreview" style="width: 30px; height: 30px; background-color: #FFFFFF; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-left: 5px;"></div>
                         </div>
                     </div>
+
                     <div class="select-group">
                         <label>颜色深度</label>
                         <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 5px;">
@@ -755,6 +754,17 @@
             initCard(0);
             updateArrayPrefix(0, `pic1`);
 
+            // 为现有卡片的删除所有按钮添加事件监听器
+            document.querySelectorAll('.image-card').forEach(function(cardElement) {
+                const cardIndex = parseInt(cardElement.getAttribute('data-card-index'));
+                const deleteAllBtns = cardElement.querySelectorAll('.delete-all-btn');
+                deleteAllBtns.forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        deleteAllImages(cardIndex);
+                    });
+                });
+            });
+
             // 添加卡片按钮事件
             document.getElementById('addCardBtn').addEventListener('click', addCard);
 
@@ -784,6 +794,25 @@
             colorFormatSelect.addEventListener('change', function() {
                 updateChannelValuesByFormat();
                 updateAllOutputDetails();
+                
+                // 控制透明填充选项的状态
+                const transparentFillCheckbox = document.getElementById('transparentFill');
+                const fillColorInput = document.getElementById('fillColor');
+                const colorPreview = document.getElementById('colorPreview');
+                
+                if (this.value === 'argb8888' || this.value === 'argb4444') {
+                    // ARGB格式不需要透明填充
+                    transparentFillCheckbox.checked = false;
+                    transparentFillCheckbox.disabled = true;
+                    fillColorInput.disabled = true;
+                    colorPreview.style.opacity = '0.5';
+                } else {
+                    // 其他格式需要透明填充
+                    transparentFillCheckbox.checked = true;
+                    transparentFillCheckbox.disabled = false;
+                    fillColorInput.disabled = false;
+                    colorPreview.style.opacity = '1';
+                }
             });
 
             // 输出格式变化事件
@@ -844,6 +873,22 @@
             const transparentFillCheckbox = document.getElementById('transparentFill');
             const fillColorInput = document.getElementById('fillColor');
             const colorPreview = document.getElementById('colorPreview');
+            
+            // 初始化透明填充选项的状态
+            const initialColorFormat = document.getElementById('colorFormat').value;
+            if (initialColorFormat === 'argb8888' || initialColorFormat === 'argb4444') {
+                // ARGB格式不需要透明填充
+                transparentFillCheckbox.checked = false;
+                transparentFillCheckbox.disabled = true;
+                fillColorInput.disabled = true;
+                colorPreview.style.opacity = '0.5';
+            } else {
+                // 其他格式需要透明填充
+                transparentFillCheckbox.checked = true;
+                transparentFillCheckbox.disabled = false;
+                fillColorInput.disabled = false;
+                colorPreview.style.opacity = '1';
+            }
 
             // 更新颜色预览
             function updateColorPreview() {
@@ -884,7 +929,279 @@
                     updateColorPreview();
                 }
             });
+
+            // 初始化预览画布交互功能
+            initPreviewCanvasInteractions();
         });
+
+        // 居中画布功能
+        function centerCanvas(cardIndex) {
+            const cardElement = document.querySelector(`[data-card-index="${cardIndex}"]`);
+
+            // 处理原图预览画布
+            const originalContainer = cardElement.querySelector('.preview-images');
+            if (originalContainer) {
+                const containerElement = cardElement.querySelector('.preview-canvas-container');
+                const containerWidth = containerElement.clientWidth;
+                const containerHeight = containerElement.clientHeight;
+                
+                // 计算实际内容宽度（考虑grid布局的gap）
+                let canvasWidth = originalContainer.scrollWidth;
+                let canvasHeight = originalContainer.scrollHeight;
+                
+                // 修复：当图片数量少于9张时，计算实际内容宽度
+                const imageCount = originalContainer.children.length;
+                if (imageCount > 0 && imageCount < 9) {
+                    const firstImage = originalContainer.firstElementChild;
+                    const imageWidth = firstImage.clientWidth;
+                    const gap = 8; // 与CSS中设置的gap一致
+                    canvasWidth = (imageWidth * imageCount) + (gap * (imageCount - 1)) + 20; // 20是padding
+                }
+
+                // 获取当前缩放
+                const transform = originalContainer.style.transform;
+                let currentScale = 1;
+                if (transform) {
+                    const scaleMatch = transform.match(/scale\(([^)]+)\)/);
+                    if (scaleMatch) {
+                        currentScale = parseFloat(scaleMatch[1]);
+                    }
+                }
+
+                // 计算居中位置
+                const centerX = (containerWidth - canvasWidth) / 2;
+                const centerY = (containerHeight - canvasHeight) / 2;
+
+                // 应用居中位置
+                const newTransform = `translate(${centerX}px, ${centerY}px) scale(${currentScale})`;
+                originalContainer.style.transform = newTransform;
+            }
+
+            // 处理输出预览画布
+            const outputContainer = cardElement.querySelector('.output-preview-images');
+            if (outputContainer) {
+                const containerElement = cardElement.querySelector('.preview-canvas-container');
+                const containerWidth = containerElement.clientWidth;
+                const containerHeight = containerElement.clientHeight;
+                
+                // 计算实际内容宽度（考虑grid布局的gap）
+                let canvasWidth = outputContainer.scrollWidth;
+                let canvasHeight = outputContainer.scrollHeight;
+                
+                // 修复：当图片数量少于9张时，计算实际内容宽度
+                const imageCount = outputContainer.children.length;
+                if (imageCount > 0 && imageCount < 9) {
+                    const firstImage = outputContainer.firstElementChild;
+                    const imageWidth = firstImage.clientWidth;
+                    const gap = 8; // 与CSS中设置的gap一致
+                    canvasWidth = (imageWidth * imageCount) + (gap * (imageCount - 1)) + 20; // 20是padding
+                }
+
+                // 获取当前缩放
+                const transform = outputContainer.style.transform;
+                let currentScale = 1;
+                if (transform) {
+                    const scaleMatch = transform.match(/scale\(([^)]+)\)/);
+                    if (scaleMatch) {
+                        currentScale = parseFloat(scaleMatch[1]);
+                    }
+                }
+
+                // 计算居中位置
+                const centerX = (containerWidth - canvasWidth) / 2;
+                const centerY = (containerHeight - canvasHeight) / 2;
+
+                // 应用居中位置
+                const newTransform = `translate(${centerX}px, ${centerY}px) scale(${currentScale})`;
+                outputContainer.style.transform = newTransform;
+            }
+        }
+
+        // 为预览容器添加滚轮缩放事件
+        function addWheelListener(container) {
+            container.addEventListener('wheel', function(e) {
+                // 阻止默认行为和事件冒泡
+                e.preventDefault();
+                e.stopPropagation();
+
+                // 获取画布元素
+                const canvas = container.querySelector('.preview-images, .output-preview-images');
+                if (!canvas) return;
+
+                // 计算缩放因子
+                const scaleFactor = e.deltaY > 0 ? 0.9 : 1.1;
+
+                // 获取当前缩放和位置
+                const transform = canvas.style.transform;
+                let currentScale = 1;
+                let currentX = 0;
+                let currentY = 0;
+
+                if (transform) {
+                    const scaleMatch = transform.match(/scale\(([^)]+)\)/);
+                    const translateMatch = transform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+
+                    if (scaleMatch) {
+                        currentScale = parseFloat(scaleMatch[1]);
+                    }
+
+                    if (translateMatch) {
+                        currentX = parseFloat(translateMatch[1]);
+                        currentY = parseFloat(translateMatch[2]);
+                    }
+                }
+
+                // 计算新缩放
+                const newScale = Math.max(0.1, Math.min(5, currentScale * scaleFactor));
+
+                // 应用新缩放
+                const newTransform = `translate(${currentX}px, ${currentY}px) scale(${newScale})`;
+                canvas.style.transform = newTransform;
+
+                // 同步到对应预览容器
+                const cardElement = container.closest('[data-card-index]');
+                if (cardElement) {
+                    const isOriginal = container.querySelector('.preview-images');
+
+                    // 获取对应预览容器
+                    const targetContainer = isOriginal ?
+                        cardElement.querySelector('.output-preview-images') :
+                        cardElement.querySelector('.preview-images');
+
+                    if (targetContainer) {
+                        targetContainer.style.transform = newTransform;
+                    }
+                }
+            }, { passive: false });
+        }
+
+        // 初始化预览画布交互功能
+        function initPreviewCanvasInteractions() {
+            // 为所有预览容器添加事件监听
+            document.addEventListener('mousedown', function(e) {
+                // 只处理右键拖拽，左键长按无效果
+                if (e.button !== 2) return;
+
+                // 阻止右键菜单弹出
+                e.preventDefault();
+
+                // 检查是否在预览容器内
+                const container = e.target.closest('.preview-canvas-container');
+                if (!container) return;
+
+                // 获取画布元素
+                const canvas = container.querySelector('.preview-images, .output-preview-images');
+                if (!canvas) return;
+
+                // 开始拖拽
+                let isDragging = true;
+                let startX = e.clientX;
+                let startY = e.clientY;
+
+                // 获取当前位置
+                const transform = canvas.style.transform;
+                let currentX = 0;
+                let currentY = 0;
+
+                if (transform) {
+                    const match = transform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+                    if (match) {
+                        currentX = parseFloat(match[1]);
+                        currentY = parseFloat(match[2]);
+                    }
+                }
+
+                // 更新鼠标样式
+                container.style.cursor = 'grabbing';
+
+                // 鼠标移动事件
+                function onMouseMove(e) {
+                    if (!isDragging) return;
+
+                    const deltaX = e.clientX - startX;
+                    const deltaY = e.clientY - startY;
+
+                    // 获取当前缩放
+                    const transform = canvas.style.transform;
+                    let currentScale = 1;
+                    if (transform) {
+                        const scaleMatch = transform.match(/scale\(([^)]+)\)/);
+                        if (scaleMatch) {
+                            currentScale = parseFloat(scaleMatch[1]);
+                        }
+                    }
+
+                    // 计算画布内容尺寸
+                    const canvasWidth = canvas.scrollWidth;
+                    const canvasHeight = canvas.scrollHeight;
+
+                    // 计算容器尺寸（用于后续的居中功能）
+                    const containerWidth = container.clientWidth;
+                    const containerHeight = container.clientHeight;
+
+                    // 移除边界限制，让用户可以随意移动画布
+                    let newX = currentX + deltaX;
+                    let newY = currentY + deltaY;
+
+                    // 应用新位置到当前画布
+                    let scalePart = '';
+                    if (transform) {
+                        const scaleMatch = transform.match(/scale\(([^)]+)\)/);
+                        if (scaleMatch) {
+                            scalePart = ` scale(${scaleMatch[1]})`;
+                        }
+                    }
+                    const newTransform = `translate(${newX}px, ${newY}px)${scalePart}`;
+                    canvas.style.transform = newTransform;
+
+                    // 更新起始位置，以便下次计算
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    currentX = newX;
+                    currentY = newY;
+
+                    // 同步到对应预览容器
+                    const cardElement = container.closest('[data-card-index]');
+                    if (cardElement) {
+                        const cardIndex = cardElement.dataset.cardIndex;
+                        const isOriginal = container.querySelector('.preview-images');
+
+                        // 获取对应预览容器
+                        const targetContainer = isOriginal ?
+                            cardElement.querySelector('.output-preview-images') :
+                            cardElement.querySelector('.preview-images');
+
+                        if (targetContainer) {
+                            targetContainer.style.transform = newTransform;
+                        }
+                    }
+                }
+
+                // 鼠标释放事件
+                function onMouseUp() {
+                    isDragging = false;
+                    container.style.cursor = 'grab';
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                }
+
+                // 添加事件监听
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
+
+            // 为所有现有的预览容器添加滚轮事件监听器
+            document.querySelectorAll('.preview-canvas-container').forEach(addWheelListener);
+
+            // 移除双击空白处自动居中功能，改为使用居中画布按钮
+
+            // 禁止预览容器的右键菜单
+            document.addEventListener('contextmenu', function(e) {
+                if (e.target.closest('.preview-canvas-container')) {
+                    e.preventDefault();
+                }
+            });
+        }
 
         // 更新单个通道的值显示
         function updateChannelValue(channel) {
@@ -953,62 +1270,9 @@
         }
 
         // 并发控制函数，用于限制同时处理的图片数量
-        async function concurrencyControl(tasks, limit, callback) {
-            const results = [];
-            const executing = new Set();
 
-            async function runNext() {
-                if (tasks.length === 0) {
-                    return;
-                }
 
-                const task = tasks.shift();
-                const promise = task();
-                results.push(promise);
-                executing.add(promise);
 
-                promise.finally(() => {
-                    executing.delete(promise);
-                    if (callback) callback();
-                    runNext();
-                });
-            }
-
-            // 启动初始任务
-            const initialTasks = Math.min(limit, tasks.length);
-            for (let i = 0; i < initialTasks; i++) {
-                runNext();
-            }
-
-            return Promise.all(results);
-        }
-
-        // 获取设备的最佳并发数
-        function getOptimalConcurrency() {
-            // 获取CPU核心数，最少1个，最多16个
-            const cpuCores = Math.min(16, navigator.hardwareConcurrency || 1);
-
-            // 检测设备内存，根据内存大小调整并发数
-            let memoryFactor = 1;
-            if (navigator.deviceMemory) {
-                if (navigator.deviceMemory < 4) {
-                    // 内存小于4GB，降低并发数
-                    memoryFactor = 0.5;
-                } else if (navigator.deviceMemory < 8) {
-                    // 内存4-8GB，保持默认
-                    memoryFactor = 0.8;
-                }
-                // 内存大于8GB，保持默认或增加
-            }
-
-            // 计算最佳并发数，最少2个，最多根据CPU核心数调整
-            const baseConcurrency = Math.max(2, Math.floor(cpuCores * memoryFactor));
-
-            // 对于图片处理，我们再乘以一个系数，因为图片处理是IO密集型和CPU密集型的结合
-            const optimalConcurrency = Math.min(16, Math.floor(baseConcurrency * 1.5));
-
-            return optimalConcurrency;
-        }
 
         // 更新单张卡片的输出详情
         function updateOutputDetails(cardIndex) {
@@ -1035,6 +1299,10 @@
                 bytesPerPixel = 2;
             } else if (colorFormat === 'rgb332') {
                 bytesPerPixel = 1;
+            } else if (colorFormat === 'argb8888') {
+                bytesPerPixel = 4;
+            } else if (colorFormat === 'argb4444') {
+                bytesPerPixel = 2;
             }
 
             // 计算单张图片的大小
@@ -1093,10 +1361,11 @@
                         const r = data[i];
                         const g = data[i + 1];
                         const b = data[i + 2];
+                        const a = data[i + 3];
 
                         if (colorFormat === 'rgb888') {
-                            // 检查RGB888反字序设置
-                            const isReverseOrder = document.getElementById('rgb888ReverseOrder').checked;
+                            // 检查反字序设置
+                            const isReverseOrder = document.getElementById('reverseOrder').checked;
                             if (isReverseOrder) {
                                 // BGR顺序
                                 pixelBytes.push(b);
@@ -1116,8 +1385,8 @@
                             const lowByte = value & 0xFF;
                             const highByte = (value >> 8) & 0xFF;
 
-                            // 检查字节顺序设置
-                            const isLittleEndian = document.getElementById('rgb565LittleEndian').checked;
+                            // 检查反字序设置
+                            const isLittleEndian = document.getElementById('reverseOrder').checked;
                             if (isLittleEndian) {
                                 // 低字节在前，高字节在后（小端序）
                                 pixelBytes.push(lowByte);
@@ -1133,6 +1402,43 @@
                             const b2 = (b >> 6) & 0x03;
                             const value = (r3 << 5) | (g3 << 2) | b2;
                             pixelBytes.push(value);
+                        } else if (colorFormat === 'argb8888') {
+                            // 检查反字序设置
+                            const isReverseOrder = document.getElementById('reverseOrder').checked;
+                            if (isReverseOrder) {
+                                // B+G+R+A顺序
+                                pixelBytes.push(b);
+                                pixelBytes.push(g);
+                                pixelBytes.push(r);
+                                pixelBytes.push(a);
+                            } else {
+                                // A+R+G+B顺序
+                                pixelBytes.push(a);
+                                pixelBytes.push(r);
+                                pixelBytes.push(g);
+                                pixelBytes.push(b);
+                            }
+                        } else if (colorFormat === 'argb4444') {
+                            // ARGB4444格式：2字节，A(4bit),R(4bit),G(4bit),B(4bit)
+                            const a4 = (a >> 4) & 0x0F;
+                            const r4 = (r >> 4) & 0x0F;
+                            const g4 = (g >> 4) & 0x0F;
+                            const b4 = (b >> 4) & 0x0F;
+                            const value = (a4 << 12) | (r4 << 8) | (g4 << 4) | b4;
+                            const lowByte = value & 0xFF;
+                            const highByte = (value >> 8) & 0xFF;
+                            
+                            // 检查反字序设置
+                            const isReverseOrder = document.getElementById('reverseOrder').checked;
+                            if (isReverseOrder) {
+                                // 低字节在前，高字节在后（小端序）
+                                pixelBytes.push(lowByte);
+                                pixelBytes.push(highByte);
+                            } else {
+                                // 高字节在前，低字节在后（大端序）
+                                pixelBytes.push(highByte);
+                                pixelBytes.push(lowByte);
+                            }
                         }
                     }
 
@@ -1176,8 +1482,14 @@
             const r = document.getElementById('rDepth').value;
             const g = document.getElementById('gDepth').value;
             const b = document.getElementById('bDepth').value;
+            const colorFormat = document.getElementById('colorFormat').value;
             const colorDepthValue = document.getElementById('colorDepthValue');
-            colorDepthValue.textContent = `RGB${r}${g}${b}`;
+            
+            if (colorFormat === 'argb8888' || colorFormat === 'argb4444') {
+                colorDepthValue.textContent = `ARGB${r}${g}${b}`;
+            } else {
+                colorDepthValue.textContent = `RGB${r}${g}${b}`;
+            }
         }
 
         // 获取各通道的最大允许值
@@ -1194,6 +1506,16 @@
                 rMax = 3;
                 gMax = 3;
                 bMax = 2;
+            } else if (colorFormat === 'argb8888') {
+                // ARGB8888格式，各通道都是8位
+                rMax = 8;
+                gMax = 8;
+                bMax = 8;
+            } else if (colorFormat === 'argb4444') {
+                // ARGB4444格式，各通道都是4位
+                rMax = 4;
+                gMax = 4;
+                bMax = 4;
             }
 
             return { rMax, gMax, bMax };
@@ -1299,265 +1621,400 @@
             checkConvertButtonState();
         }
 
+        // 删除所有图片
+        function deleteAllImages(cardIndex) {
+            const card = cards[cardIndex];
+            if (!card) return;
+
+            // 清空图片数组
+            card.images = [];
+
+            // 更新卡片状态
+            card.isValid = false;
+
+            // 重置卡片尺寸
+            card.originalWidth = 0;
+            card.originalHeight = 0;
+            card.aspectRatio = 1;
+            card.width = 0;
+            card.height = 0;
+
+            // 重置尺寸输入框
+            const cardElement = document.querySelector(`[data-card-index="${cardIndex}"]`);
+            const widthInput = cardElement.querySelector('.width-input');
+            const heightInput = cardElement.querySelector('.height-input');
+            widthInput.value = '';
+            heightInput.value = '';
+            widthInput.disabled = true;
+            heightInput.disabled = true;
+
+            // 更新图片数量显示
+            updateImageCountDisplay(cardIndex);
+
+            // 更新原图预览
+            updateOriginalPreviews(cardIndex);
+
+            // 更新输出预览
+            updateOutputPreview(cardIndex);
+
+            // 更新输出详情
+            updateOutputDetails(cardIndex);
+
+            // 更新卡片状态显示
+            updateCardStatus(cardIndex, '');
+
+            // 检查转换按钮状态
+            checkConvertButtonState();
+        }
+
         // 更新单张卡片的原图预览
         function updateOriginalPreviews(cardIndex) {
-            const card = cards[cardIndex];
-            const cardElement = document.querySelector(`[data-card-index="${cardIndex}"]`);
-            const previewContainer = cardElement.querySelector('.preview-images');
-            const scrollContainer = cardElement.querySelector('.preview-scroll-container');
+            return new Promise((resolve) => {
+                const card = cards[cardIndex];
+                const cardElement = document.querySelector(`[data-card-index="${cardIndex}"]`);
+                const previewContainer = cardElement.querySelector('.preview-images');
 
-            // 获取原图预览的父容器
-            const originalPreviewParent = scrollContainer.parentElement;
+                // 清空现有预览
+                previewContainer.innerHTML = '';
+                
+                // 暂时隐藏预览容器，避免用户看到图片加载过程
+                previewContainer.style.opacity = '0';
+                previewContainer.style.visibility = 'hidden';
 
-            // 清空现有预览
-            previewContainer.innerHTML = '';
+                // 获取预览容器的高度，计算默认缩放比例（视窗高度的50%）
+                const containerElement = cardElement.querySelector('.preview-canvas-container');
+                const containerHeight = containerElement.clientHeight;
+                const defaultScaleHeight = containerHeight * 0.5;
 
-            // 获取预览容器尺寸
-            const containerHeight = 150;
-            const containerWidth = scrollContainer.clientWidth;
-
-            // 每张图片的宽度：容器宽度除以3，减去边距
-            const imageWidth = (containerWidth / 3) - 10; // 减去10px的边距（5px * 2）
-
-            card.images.forEach((imageItem, index) => {
-                if (imageItem.previewUrl) {
-                    // 创建图片容器
-                    const imgContainer = document.createElement('div');
-                    imgContainer.style.position = 'relative';
-                    imgContainer.style.height = '100%';
-                    imgContainer.style.width = `${imageWidth}px`;
-                    imgContainer.style.margin = '0 5px';
-                    imgContainer.style.flexShrink = '0';
-                    imgContainer.style.display = 'flex';
-                    imgContainer.style.justifyContent = 'center';
-                    imgContainer.style.alignItems = 'center';
-                    imgContainer.style.background = '#000';
-                    imgContainer.style.borderRadius = '4px';
-                    imgContainer.style.overflow = 'hidden';
-                    imgContainer.style.transition = 'all 0.3s ease';
-
-                    // 添加悬停效果
-                    imgContainer.addEventListener('mouseenter', function() {
-                        this.style.opacity = '0.8';
-                        this.querySelector('.delete-icon').style.display = 'block';
-                    });
-
-                    imgContainer.addEventListener('mouseleave', function() {
-                        this.style.opacity = '1';
-                        this.querySelector('.delete-icon').style.display = 'none';
-                    });
-
-                    // 创建图片元素
-                    const img = document.createElement('img');
-                    img.src = imageItem.previewUrl;
-                    img.alt = `原图 ${index + 1}`;
-                    img.style.objectFit = 'contain';
-                    img.style.imageRendering = 'pixelated';
-                    img.style.imageRendering = 'crisp-edges';
-                    img.style.height = '100%';
-                    img.style.width = '100%';
-                    img.style.transition = 'all 0.3s ease';
-
-                    // 创建删除按钮
-                    const deleteBtn = document.createElement('div');
-                    deleteBtn.className = 'delete-icon';
-                    deleteBtn.style.position = 'absolute';
-                    deleteBtn.style.top = '5px';
-                    deleteBtn.style.right = '5px';
-                    deleteBtn.style.width = '24px';
-                    deleteBtn.style.height = '24px';
-                    deleteBtn.style.background = 'rgba(255, 0, 0, 0.8)';
-                    deleteBtn.style.color = 'white';
-                    deleteBtn.style.borderRadius = '50%';
-                    deleteBtn.style.display = 'none';
-                    deleteBtn.style.justifyContent = 'center';
-                    deleteBtn.style.alignItems = 'center';
-                    deleteBtn.style.cursor = 'pointer';
-                    deleteBtn.style.fontSize = '18px';
-                    deleteBtn.style.fontWeight = 'bold';
-                    deleteBtn.style.lineHeight = '24px';
-                    deleteBtn.style.textAlign = 'center';
-                    deleteBtn.style.transition = 'all 0.3s ease';
-                    deleteBtn.style.zIndex = '10';
-                    deleteBtn.innerHTML = '×';
-
-                    // 添加删除事件
-                    deleteBtn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        deleteImage(cardIndex, index);
-                    });
-
-                    // 组装图片容器
-                    imgContainer.appendChild(img);
-                    imgContainer.appendChild(deleteBtn);
-                    previewContainer.appendChild(imgContainer);
+                if (card.images.length === 0) {
+                    // 如果没有图片，显示空容器
+                    previewContainer.style.opacity = '1';
+                    previewContainer.style.visibility = 'visible';
+                    resolve();
+                    return;
                 }
+
+                let loadedImages = 0;
+                const totalImages = card.images.length;
+
+                card.images.forEach((imageItem, index) => {
+                    if (imageItem.previewUrl) {
+                        // 创建图片容器
+                        const imgContainer = document.createElement('div');
+                        imgContainer.style.position = 'relative';
+                        imgContainer.style.display = 'flex';
+                        imgContainer.style.justifyContent = 'center';
+                        imgContainer.style.alignItems = 'center';
+                        imgContainer.style.background = 'transparent';
+                        imgContainer.style.borderRadius = '4px';
+                        imgContainer.style.overflow = 'hidden';
+                        imgContainer.style.transition = 'all 0.3s ease';
+
+                        // 添加悬停效果 - 增强框选效果（红色系，代表删除警告）
+                        imgContainer.addEventListener('mouseenter', function() {
+                            this.style.opacity = '1';
+                            this.style.boxShadow = '0 0 15px rgba(220, 53, 69, 0.7)';
+                            this.style.transform = 'scale(1)';
+                            // 添加选中滤镜效果
+                            const canvas = this.querySelector('canvas');
+                            if (canvas) {
+                                canvas.style.filter = 'brightness(1.1) contrast(1.1) sepia(0.3)';
+                            }
+                        });
+
+                        imgContainer.addEventListener('mouseleave', function() {
+                            this.style.opacity = '1';
+                            this.style.boxShadow = 'none';
+                            this.style.transform = 'scale(1)';
+                            // 移除选中滤镜效果
+                            const canvas = this.querySelector('canvas');
+                            if (canvas) {
+                                canvas.style.filter = 'none';
+                            }
+                        });
+
+                        // 添加单击删除事件（只有在没有拖拽的情况下才触发）
+                        let isDragStarted = false;
+                        let clickStartX = 0;
+                        let clickStartY = 0;
+
+                        imgContainer.addEventListener('mousedown', function(e) {
+                            // 记录点击起始位置
+                            clickStartX = e.clientX;
+                            clickStartY = e.clientY;
+                            isDragStarted = false;
+                        });
+
+                        imgContainer.addEventListener('mousemove', function(e) {
+                            // 如果移动距离超过阈值，认为是拖拽
+                            if (Math.abs(e.clientX - clickStartX) > 5 || Math.abs(e.clientY - clickStartY) > 5) {
+                                isDragStarted = true;
+                            }
+                        });
+
+                        imgContainer.addEventListener('click', function(e) {
+                            // 只有在没有拖拽的情况下才触发删除
+                            if (!isDragStarted) {
+                                e.stopPropagation();
+                                deleteImage(cardIndex, index);
+                            }
+                        });
+
+                        // 创建canvas元素来显示原图
+                        const canvas = document.createElement('canvas');
+                        canvas.style.transition = 'all 0.3s ease';
+
+                        // 加载图片并绘制
+                        const img = new Image();
+                        img.onload = function() {
+                            // 计算原始宽高比
+                            const aspectRatio = img.width / img.height;
+
+                            // 根据默认缩放高度计算canvas尺寸，保持原图比例
+                            let canvasHeight = defaultScaleHeight;
+                            let canvasWidth = canvasHeight * aspectRatio;
+
+                            // 设置canvas尺寸
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+
+                            // 设置canvas显示尺寸
+                            canvas.style.width = `${canvasWidth}px`;
+                            canvas.style.height = `${canvasHeight}px`;
+
+                            // 设置容器尺寸
+                            imgContainer.style.width = `${canvasWidth}px`;
+                            imgContainer.style.height = `${canvasHeight}px`;
+
+                            const ctx = canvas.getContext('2d');
+
+                            // 清空canvas
+                            ctx.clearRect(0, 0, img.width, img.height);
+
+                            // 设置图像平滑禁用，保持像素清晰
+                            ctx.imageSmoothingEnabled = true;
+                            ctx.imageSmoothingQuality = 'medium';
+
+                            // 绘制原始大小的图像
+                            ctx.drawImage(img, 0, 0, img.width, img.height);
+
+                            // 检查是否所有图片都已加载完成
+                            loadedImages++;
+                            if (loadedImages === totalImages) {
+                                // 所有图片加载完成后，显示预览容器
+                                previewContainer.style.opacity = '1';
+                                previewContainer.style.visibility = 'visible';
+                                resolve();
+                            }
+                        };
+                        img.onerror = function() {
+                            // 即使图片加载失败，也要继续计数
+                            loadedImages++;
+                            if (loadedImages === totalImages) {
+                                // 所有图片加载完成后，显示预览容器
+                                previewContainer.style.opacity = '1';
+                                previewContainer.style.visibility = 'visible';
+                                resolve();
+                            }
+                        };
+                        img.src = imageItem.previewUrl;
+
+                        // 组装图片容器
+                        imgContainer.appendChild(canvas);
+                        previewContainer.appendChild(imgContainer);
+                    } else {
+                        loadedImages++;
+                        if (loadedImages === totalImages) {
+                            // 所有图片加载完成后，显示预览容器
+                            previewContainer.style.opacity = '1';
+                            previewContainer.style.visibility = 'visible';
+                            resolve();
+                        }
+                    }
+                });
             });
-
-            // 根据图片数量调整样式
-            if (card.images.length < 4) {
-                // 1-3张图片，居中对齐
-                scrollContainer.style.justifyContent = 'center';
-                scrollContainer.style.alignItems = 'center';
-                previewContainer.style.transform = 'translateX(0)'; // 重置transform
-                previewContainer.style.width = 'auto'; // 自动宽度，不超出父容器
-                originalPreviewParent.classList.add('images-less-than-4');
-            } else {
-                // 4张及以上，左对齐
-                scrollContainer.style.justifyContent = 'flex-start';
-                previewContainer.style.width = 'fit-content'; // 适应内容宽度，允许滚动
-                originalPreviewParent.classList.remove('images-less-than-4');
-
-                // 检查并调整滚动位置，确保始终显示有效的图片内容
-                adjustScrollPosition(cardIndex);
-            }
-
-            // 重新初始化滚动功能，确保滚动按钮正常工作
-            initScrollFunctionality(cardIndex);
         }
 
         // 更新单张卡片的输出预览
         function updateOutputPreview(cardIndex) {
-            const card = cards[cardIndex];
-            const cardElement = document.querySelector(`[data-card-index="${cardIndex}"]`);
-            const outputContainer = cardElement.querySelector('.output-preview-images');
-            const scrollContainers = cardElement.querySelectorAll('.preview-scroll-container');
+            return new Promise((resolve) => {
+                const card = cards[cardIndex];
+                const cardElement = document.querySelector(`[data-card-index="${cardIndex}"]`);
+                const outputContainer = cardElement.querySelector('.output-preview-images');
 
-            // 获取输出预览的滚动容器和父容器
-            const outputScrollContainer = scrollContainers[1];
-            const outputPreviewParent = outputScrollContainer.parentElement;
+                // 清空现有预览
+                outputContainer.innerHTML = '';
+                
+                // 暂时隐藏预览容器，避免用户看到图片加载过程
+                outputContainer.style.opacity = '0';
+                outputContainer.style.visibility = 'hidden';
 
-            // 清空现有预览
-            outputContainer.innerHTML = '';
+                // 获取预览容器的高度，计算默认缩放比例（与原图预览一致）
+                const containerElement = cardElement.querySelector('.preview-canvas-container');
+                const containerHeight = containerElement.clientHeight;
+                const defaultScaleHeight = containerHeight * 0.5;
 
-            // 获取预览容器尺寸
-            const containerHeight = 150;
-            const containerWidth = scrollContainers[0].clientWidth;
-
-            // 每张图片的宽度：容器宽度除以3，减去边距
-            const imageWidth = (containerWidth / 3) - 10; // 减去10px的边距（5px * 2）
-
-            // 计算缩放比例，确保图片高度适应容器
-            const scale = containerHeight / card.height;
-            const displayHeight = containerHeight;
-
-            card.images.forEach((imageItem, index) => {
-                if (imageItem.previewUrl) {
-                    // 创建canvas容器
-                    const canvasContainer = document.createElement('div');
-                    canvasContainer.style.position = 'relative';
-                    canvasContainer.style.height = '100%';
-                    canvasContainer.style.width = `${imageWidth}px`;
-                    canvasContainer.style.margin = '0 5px';
-                    canvasContainer.style.flexShrink = '0';
-                    canvasContainer.style.display = 'flex';
-                    canvasContainer.style.justifyContent = 'center';
-                    canvasContainer.style.alignItems = 'center';
-                    canvasContainer.style.background = '#000';
-                    canvasContainer.style.borderRadius = '4px';
-                    canvasContainer.style.overflow = 'hidden';
-                    canvasContainer.style.transition = 'all 0.3s ease';
-
-                    // 添加悬停效果
-                    canvasContainer.addEventListener('mouseenter', function() {
-                        this.style.opacity = '0.8';
-                        this.querySelector('.delete-icon').style.display = 'block';
-                    });
-
-                    canvasContainer.addEventListener('mouseleave', function() {
-                        this.style.opacity = '1';
-                        this.querySelector('.delete-icon').style.display = 'none';
-                    });
-
-                    // 创建canvas元素
-                    const canvas = document.createElement('canvas');
-                    canvas.style.height = '100%';
-                    canvas.style.width = '100%';
-                    canvas.style.transition = 'all 0.3s ease';
-
-                    canvas.width = imageWidth;
-                    canvas.height = displayHeight;
-
-                    const ctx = canvas.getContext('2d');
-
-                    // 加载图片并处理
-                    const img = new Image();
-                    img.onload = function() {
-                        // 绘制原始图片到临时canvas
-                        const tempCanvas = document.createElement('canvas');
-                        tempCanvas.width = card.width;
-                        tempCanvas.height = card.height;
-                        const tempCtx = tempCanvas.getContext('2d');
-                        tempCtx.drawImage(img, 0, 0, card.width, card.height);
-
-                        // 获取原始像素数据
-                        let imageData = tempCtx.getImageData(0, 0, card.width, card.height);
-                        imageData = processImageData(imageData, document.getElementById('colorFormat').value);
-
-                        // 将处理后的数据绘制到临时canvas
-                        tempCtx.putImageData(imageData, 0, 0);
-
-                        // 清空输出预览canvas
-                        ctx.clearRect(0, 0, imageWidth, displayHeight);
-
-                        // 设置图像平滑禁用，保持像素清晰
-                        ctx.imageSmoothingEnabled = false;
-
-                        // 绘制缩放后的图像
-                        ctx.drawImage(tempCanvas, 0, 0, card.width, card.height, 0, 0, imageWidth, displayHeight);
-                    };
-                    img.src = imageItem.previewUrl;
-
-                    // 创建删除按钮
-                    const deleteBtn = document.createElement('div');
-                    deleteBtn.className = 'delete-icon';
-                    deleteBtn.style.position = 'absolute';
-                    deleteBtn.style.top = '5px';
-                    deleteBtn.style.right = '5px';
-                    deleteBtn.style.width = '24px';
-                    deleteBtn.style.height = '24px';
-                    deleteBtn.style.background = 'rgba(255, 0, 0, 0.8)';
-                    deleteBtn.style.color = 'white';
-                    deleteBtn.style.borderRadius = '50%';
-                    deleteBtn.style.display = 'none';
-                    deleteBtn.style.justifyContent = 'center';
-                    deleteBtn.style.alignItems = 'center';
-                    deleteBtn.style.cursor = 'pointer';
-                    deleteBtn.style.fontSize = '18px';
-                    deleteBtn.style.fontWeight = 'bold';
-                    deleteBtn.style.lineHeight = '24px';
-                    deleteBtn.style.textAlign = 'center';
-                    deleteBtn.style.transition = 'all 0.3s ease';
-                    deleteBtn.style.zIndex = '10';
-                    deleteBtn.innerHTML = '×';
-
-                    // 添加删除事件
-                    deleteBtn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        deleteImage(cardIndex, index);
-                    });
-
-                    // 组装canvas容器
-                    canvasContainer.appendChild(canvas);
-                    canvasContainer.appendChild(deleteBtn);
-                    outputContainer.appendChild(canvasContainer);
+                if (card.images.length === 0) {
+                    // 如果没有图片，显示空容器
+                    outputContainer.style.opacity = '1';
+                    outputContainer.style.visibility = 'visible';
+                    resolve();
+                    return;
                 }
-            });
 
-            // 根据图片数量调整样式
-            if (card.images.length < 4) {
-                // 1-3张图片，居中对齐
-                outputScrollContainer.style.justifyContent = 'center';
-                outputScrollContainer.style.alignItems = 'center';
-                outputContainer.style.transform = 'translateX(0)'; // 重置transform
-                outputContainer.style.width = 'auto'; // 自动宽度，不超出父容器
-                outputPreviewParent.classList.add('images-less-than-4');
-            } else {
-                // 4张及以上，左对齐
-                outputScrollContainer.style.justifyContent = 'flex-start';
-                outputContainer.style.width = 'fit-content'; // 适应内容宽度，允许滚动
-                outputPreviewParent.classList.remove('images-less-than-4');
-            }
+                let loadedImages = 0;
+                const totalImages = card.images.length;
+
+                card.images.forEach((imageItem, index) => {
+                    if (imageItem.previewUrl) {
+                        // 创建canvas容器
+                        const canvasContainer = document.createElement('div');
+                        canvasContainer.style.position = 'relative';
+                        canvasContainer.style.display = 'flex';
+                        canvasContainer.style.justifyContent = 'center';
+                        canvasContainer.style.alignItems = 'center';
+                        canvasContainer.style.background = 'transparent';
+                        canvasContainer.style.borderRadius = '4px';
+                        canvasContainer.style.overflow = 'hidden';
+                        canvasContainer.style.transition = 'all 0.3s ease';
+
+                        // 添加悬停效果 - 增强框选效果（红色系，代表删除警告）
+                        canvasContainer.addEventListener('mouseenter', function() {
+                            this.style.opacity = '1';
+                            this.style.boxShadow = '0 0 15px rgba(220, 53, 69, 0.7)';
+                            this.style.transform = 'scale(1)';
+                            // 添加选中滤镜效果
+                            const canvas = this.querySelector('canvas');
+                            if (canvas) {
+                                canvas.style.filter = 'brightness(1.1) contrast(1.1) sepia(0.3)';
+                            }
+                        });
+
+                        canvasContainer.addEventListener('mouseleave', function() {
+                            this.style.opacity = '1';
+                            this.style.boxShadow = 'none';
+                            this.style.transform = 'scale(1)';
+                            // 移除选中滤镜效果
+                            const canvas = this.querySelector('canvas');
+                            if (canvas) {
+                                canvas.style.filter = 'none';
+                            }
+                        });
+
+                        // 添加单击删除事件（只有在没有拖拽的情况下才触发）
+                        let isDragStarted = false;
+                        let clickStartX = 0;
+                        let clickStartY = 0;
+
+                        canvasContainer.addEventListener('mousedown', function(e) {
+                            // 记录点击起始位置
+                            clickStartX = e.clientX;
+                            clickStartY = e.clientY;
+                            isDragStarted = false;
+                        });
+
+                        canvasContainer.addEventListener('mousemove', function(e) {
+                            // 如果移动距离超过阈值，认为是拖拽
+                            if (Math.abs(e.clientX - clickStartX) > 5 || Math.abs(e.clientY - clickStartY) > 5) {
+                                isDragStarted = true;
+                            }
+                        });
+
+                        canvasContainer.addEventListener('click', function(e) {
+                            // 只有在没有拖拽的情况下才触发删除
+                            if (!isDragStarted) {
+                                e.stopPropagation();
+                                deleteImage(cardIndex, index);
+                            }
+                        });
+
+                        // 创建canvas元素
+                        const canvas = document.createElement('canvas');
+                        canvas.style.transition = 'all 0.3s ease';
+
+                        // 加载图片并处理
+                        const img = new Image();
+                        img.onload = function() {
+                            // 计算原始宽高比
+                            const aspectRatio = img.width / img.height;
+
+                            // 根据默认缩放高度计算canvas尺寸，保持原图比例
+                            let canvasHeight = defaultScaleHeight;
+                            let canvasWidth = canvasHeight * aspectRatio;
+
+                            // 设置canvas尺寸
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+
+                            // 设置canvas显示尺寸
+                            canvas.style.width = `${canvasWidth}px`;
+                            canvas.style.height = `${canvasHeight}px`;
+
+                            // 设置容器尺寸
+                            canvasContainer.style.width = `${canvasWidth}px`;
+                            canvasContainer.style.height = `${canvasHeight}px`;
+
+                            const ctx = canvas.getContext('2d');
+
+                            // 绘制原始图片到临时canvas
+                            const tempCanvas = document.createElement('canvas');
+                            tempCanvas.width = card.width;
+                            tempCanvas.height = card.height;
+                            const tempCtx = tempCanvas.getContext('2d');
+                            tempCtx.drawImage(img, 0, 0, card.width, card.height);
+
+                            // 获取原始像素数据
+                            let imageData = tempCtx.getImageData(0, 0, card.width, card.height);
+                            imageData = processImageData(imageData, document.getElementById('colorFormat').value);
+
+                            // 将处理后的数据绘制到临时canvas
+                            tempCtx.putImageData(imageData, 0, 0);
+
+                            // 清空输出预览canvas
+                            ctx.clearRect(0, 0, img.width, img.height);
+
+                            // 设置图像平滑禁用，保持像素清晰
+                            ctx.imageSmoothingEnabled = true;
+                            ctx.imageSmoothingQuality = 'medium';
+
+                            // 绘制处理后的图像
+                            ctx.drawImage(tempCanvas, 0, 0, card.width, card.height, 0, 0, img.width, img.height);
+
+                            // 检查是否所有图片都已加载完成
+                            loadedImages++;
+                            if (loadedImages === totalImages) {
+                                // 所有图片加载完成后，显示预览容器
+                                outputContainer.style.opacity = '1';
+                                outputContainer.style.visibility = 'visible';
+                                resolve();
+                            }
+                        };
+                        img.onerror = function() {
+                            // 即使图片加载失败，也要继续计数
+                            loadedImages++;
+                            if (loadedImages === totalImages) {
+                                // 所有图片加载完成后，显示预览容器
+                                outputContainer.style.opacity = '1';
+                                outputContainer.style.visibility = 'visible';
+                                resolve();
+                            }
+                        };
+                        img.src = imageItem.previewUrl;
+
+                        // 组装canvas容器
+                        canvasContainer.appendChild(canvas);
+                        outputContainer.appendChild(canvasContainer);
+                    } else {
+                        loadedImages++;
+                        if (loadedImages === totalImages) {
+                            // 所有图片加载完成后，显示预览容器
+                            outputContainer.style.opacity = '1';
+                            outputContainer.style.visibility = 'visible';
+                            resolve();
+                        }
+                    }
+                });
+            });
         }
 
         // 调整滚动位置，确保始终显示有效的图片内容
@@ -1890,12 +2347,26 @@
             // 初始化时将预览窗口高度设置为75px
             adjustPreviewHeight(cardIndex, false);
 
-            // 初始化预览，确保滚动按钮正确显示/隐藏
+            // 初始化预览
             updateOriginalPreviews(cardIndex);
             updateOutputPreview(cardIndex);
 
-            // 初始化滚动功能
-            initScrollFunctionality(cardIndex);
+            // 为新创建的预览容器添加滚轮事件监听器
+            setTimeout(() => {
+                const cardElement = document.querySelector(`[data-card-index="${cardIndex}"]`);
+                cardElement.querySelectorAll('.preview-canvas-container').forEach(function(container) {
+                    addWheelListener(container);
+                });
+            }, 0);
+
+            // 为居中画布按钮添加事件监听器
+            const centerCanvasBtns = card.querySelectorAll('.center-canvas-btn');
+            centerCanvasBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const currentIndex = parseInt(this.closest('.image-card').getAttribute('data-card-index'));
+                    centerCanvas(currentIndex);
+                });
+            });
 
             // 图片选择事件 - 动态获取当前索引
             const fileInput = card.querySelector('.image-file-input');
@@ -1955,6 +2426,15 @@
                 const currentIndex = parseInt(this.closest('.image-card').getAttribute('data-card-index'));
                 deleteCard(currentIndex);
             });
+
+            // 删除所有图片事件 - 动态获取当前索引
+            const deleteAllBtns = card.querySelectorAll('.delete-all-btn');
+            deleteAllBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const currentIndex = parseInt(this.closest('.image-card').getAttribute('data-card-index'));
+                    deleteAllImages(currentIndex);
+                });
+            });
         }
 
         // 添加新卡片
@@ -1987,39 +2467,29 @@
                 </div>
 
                 <!-- 原图预览 -->
-                        <div style="margin-top: 15px;">
-                            <h4 style="margin-bottom: 5px; color: #666;">原图预览</h4>
-                            <div style="position: relative; border-radius: 8px; overflow: hidden; background: #000;">
-                                <!-- 滚动按钮 -->
-                                <button class="scroll-btn scroll-left" style="position: absolute; left: 5px; top: 50%; transform: translateY(-50%); background: linear-gradient(135deg, rgba(79, 172, 254, 0.8), rgba(0, 242, 254, 0.8)); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; opacity: 0;">
-                                    ◀
-                                </button>
-                                <button class="scroll-btn scroll-right" style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: linear-gradient(135deg, rgba(79, 172, 254, 0.8), rgba(0, 242, 254, 0.8)); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; opacity: 0;">
-                                    ▶
-                                </button>
-                                <!-- 图片容器 -->
-                                <div class="preview-scroll-container" style="display: flex; overflow: hidden; height: 150px;">
-                                    <div class="preview-images" style="display: flex; transition: transform 0.3s ease;"></div>
-                                </div>
-                            </div>
+                <div style="margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <h4 style="color: #666; margin: 0;">原图预览</h4>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="center-canvas-btn" style="background: rgba(79, 172, 254, 0.8); color: white; border: none; border-radius: 4px; padding: 2px 8px; font-size: 10px; cursor: pointer; transition: all 0.3s ease;">居中画布</button>
+                            <button class="delete-all-btn" style="background: rgba(220, 53, 69, 0.8); color: white; border: none; border-radius: 4px; padding: 2px 8px; font-size: 10px; cursor: pointer; transition: all 0.3s ease;">删除所有</button>
                         </div>
-                        <!-- 输出预览 -->
-                        <div style="margin-top: 15px;">
-                            <h4 style="margin-bottom: 5px; color: #666;">输出预览</h4>
-                            <div style="position: relative; border-radius: 8px; overflow: hidden; background: #000;">
-                                <!-- 滚动按钮 -->
-                                <button class="scroll-btn scroll-left" style="position: absolute; left: 5px; top: 50%; transform: translateY(-50%); background: linear-gradient(135deg, rgba(79, 172, 254, 0.8), rgba(0, 242, 254, 0.8)); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; opacity: 0;">
-                                    ◀
-                                </button>
-                                <button class="scroll-btn scroll-right" style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: linear-gradient(135deg, rgba(79, 172, 254, 0.8), rgba(0, 242, 254, 0.8)); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; opacity: 0;">
-                                    ▶
-                                </button>
-                                <!-- 图片容器 -->
-                                <div class="preview-scroll-container" style="display: flex; overflow: hidden; height: 150px;">
-                                    <div class="output-preview-images" style="display: flex; transition: transform 0.3s ease;"></div>
-                                </div>
-                            </div>
+                    </div>
+                    <div style="position: relative; border-radius: 8px; overflow: hidden; height: 150px;" class="chessboard-bg">
+                        <div class="preview-canvas-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden;">
+                            <div class="preview-images" style="position: absolute; top: 0; left: 0; display: grid; grid-template-columns: repeat(9, auto); gap: 8px; padding: 10px; transform-origin: center; transition: transform 0.1s ease;"></div>
                         </div>
+                    </div>
+                </div>
+                <!-- 输出预览 -->
+                <div style="margin-top: 15px;">
+                    <h4 style="margin-bottom: 5px; color: #666;">输出预览</h4>
+                    <div style="position: relative; border-radius: 8px; overflow: hidden; height: 150px;" class="chessboard-bg">
+                        <div class="preview-canvas-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden;">
+                            <div class="output-preview-images" style="position: absolute; top: 0; left: 0; display: grid; grid-template-columns: repeat(9, auto); gap: 8px; padding: 10px; transform-origin: center; transition: transform 0.1s ease;"></div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- 尺寸调整 -->
                 <div style="margin-top: 15px;">
@@ -2282,7 +2752,7 @@
 
             // 执行批量处理
             Promise.all(processPromises)
-                .then(processedImages => {
+                .then(async processedImages => {
                     // 批量添加图片到卡片
                     for (const processedImage of processedImages) {
                         // 创建新的图片项
@@ -2327,17 +2797,20 @@
                         // 恢复预览窗口大小
                         adjustPreviewHeight(cardIndex, true);
 
-                        // 更新原图预览
-                        updateOriginalPreviews(cardIndex);
+                        // 更新原图预览并等待所有图片加载完成
+                        await updateOriginalPreviews(cardIndex);
 
-                        // 更新输出预览
-                        updateOutputPreview(cardIndex);
+                        // 更新输出预览并等待所有图片加载完成
+                        await updateOutputPreview(cardIndex);
 
                         // 更新卡片状态
                         updateCardStatus(cardIndex, `✅ 已添加 ${card.images.length} 张图片`);
 
                         // 更新输出详情
                         updateOutputDetails(cardIndex);
+
+                        // 所有图片加载完成后执行居中画布
+                        centerCanvas(cardIndex);
 
                         // 检查是否可以转换
                         checkConvertButtonState();
@@ -2594,247 +3067,7 @@
             }
         }
 
-        // 单张图片处理 - 用于生成C文件
-        async function processImageForC(imageItem, card, imgIndex, format, useRle) {
-            // 创建canvas进行图片处理
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = card.width;
-            canvas.height = card.height;
 
-            // 绘制图片
-            const img = new Image();
-            await new Promise((resolve) => {
-                img.onload = resolve;
-                img.src = imageItem.previewUrl;
-            });
-
-            // 检查是否启用透明填充
-            const useTransparentFill = document.getElementById('transparentFill').checked;
-            let fillR = 255, fillG = 255, fillB = 255;
-
-            if (useTransparentFill) {
-                // 获取填充颜色
-                const fillColor = document.getElementById('fillColor').value.trim().toUpperCase();
-                if (/^[0-9A-F]{6}$/.test(fillColor)) {
-                    // 解析RGB值
-                    fillR = parseInt(fillColor.substring(0, 2), 16);
-                    fillG = parseInt(fillColor.substring(2, 4), 16);
-                    fillB = parseInt(fillColor.substring(4, 6), 16);
-                }
-            }
-
-            // 创建临时canvas处理透明度
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = card.width;
-            tempCanvas.height = card.height;
-            const tempCtx = tempCanvas.getContext('2d');
-
-            // 如果启用透明填充，先绘制填充颜色，再绘制图片
-            if (useTransparentFill) {
-                // 绘制填充颜色
-                tempCtx.fillStyle = `rgb(${fillR}, ${fillG}, ${fillB})`;
-                tempCtx.fillRect(0, 0, card.width, card.height);
-                // 绘制图片（会与背景色混合透明像素）
-                tempCtx.drawImage(img, 0, 0, card.width, card.height);
-            } else {
-                // 直接绘制图片
-                tempCtx.drawImage(img, 0, 0, card.width, card.height);
-            }
-
-            // 获取图片数据
-            let imageData = tempCtx.getImageData(0, 0, card.width, card.height);
-            // 应用颜色深度过滤
-            imageData = processImageData(imageData, format);
-            const data = imageData.data;
-
-            // 生成像素数据数组
-            const pixelBytes = [];
-
-            // 逐行处理像素数据
-            for (let y = 0; y < card.height; y++) {
-                for (let x = 0; x < card.width; x++) {
-                    const index = (y * card.width + x) * 4;
-                    const r = data[index];
-                    const g = data[index + 1];
-                    const b = data[index + 2];
-
-                    if (format === 'rgb888') {
-                        // 检查RGB888反字序设置
-                        const isReverseOrder = document.getElementById('rgb888ReverseOrder').checked;
-                        if (isReverseOrder) {
-                            // BGR顺序
-                            pixelBytes.push(b);
-                            pixelBytes.push(g);
-                            pixelBytes.push(r);
-                        } else {
-                            // RGB顺序
-                            pixelBytes.push(r);
-                            pixelBytes.push(g);
-                            pixelBytes.push(b);
-                        }
-                    } else if (format === 'rgb565') {
-                        // RGB565格式：2字节
-                        const r5 = (r >> 3) & 0x1F;
-                        const g6 = (g >> 2) & 0x3F;
-                        const b5 = (b >> 3) & 0x1F;
-                        const value = (r5 << 11) | (g6 << 5) | b5;
-                        const lowByte = value & 0xFF;
-                        const highByte = (value >> 8) & 0xFF;
-
-                        // 检查字节顺序设置
-                        const isLittleEndian = document.getElementById('rgb565LittleEndian').checked;
-                        if (isLittleEndian) {
-                            // 低字节在前，高字节在后（小端序）
-                            pixelBytes.push(lowByte);
-                            pixelBytes.push(highByte);
-                        } else {
-                            // 高字节在前，低字节在后（大端序）
-                            pixelBytes.push(highByte);
-                            pixelBytes.push(lowByte);
-                        }
-                    } else if (format === 'rgb332') {
-                        // RGB332格式：1字节
-                        const r3 = (r >> 5) & 0x07;
-                        const g3 = (g >> 5) & 0x07;
-                        const b2 = (b >> 6) & 0x03;
-                        const value = (r3 << 5) | (g3 << 2) | b2;
-                        pixelBytes.push(value);
-                    }
-                }
-            }
-
-            // 应用RLE压缩
-            let finalBytes = pixelBytes;
-            if (useRle) {
-                finalBytes = rleCompress(pixelBytes, format);
-            }
-
-            return { finalBytes, pixelBytes, format };
-        }
-
-        // 单张图片处理 - 用于生成BIN文件
-        async function processImageForBin(imageItem, card, imgIndex, format, useRle) {
-            // 绘制图片
-            const img = new Image();
-            await new Promise((resolve) => {
-                img.onload = resolve;
-                img.src = imageItem.previewUrl;
-            });
-
-            // 检查是否启用透明填充
-            const useTransparentFill = document.getElementById('transparentFill').checked;
-            let fillR = 255, fillG = 255, fillB = 255;
-
-            if (useTransparentFill) {
-                // 获取填充颜色
-                const fillColor = document.getElementById('fillColor').value.trim().toUpperCase();
-                if (/^[0-9A-F]{6}$/.test(fillColor)) {
-                    // 解析RGB值
-                    fillR = parseInt(fillColor.substring(0, 2), 16);
-                    fillG = parseInt(fillColor.substring(2, 4), 16);
-                    fillB = parseInt(fillColor.substring(4, 6), 16);
-                }
-            }
-
-            // 创建临时canvas处理透明度
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = card.width;
-            tempCanvas.height = card.height;
-            const tempCtx = tempCanvas.getContext('2d');
-
-            // 如果启用透明填充，先绘制填充颜色，再绘制图片
-            if (useTransparentFill) {
-                // 绘制填充颜色
-                tempCtx.fillStyle = `rgb(${fillR}, ${fillG}, ${fillB})`;
-                tempCtx.fillRect(0, 0, card.width, card.height);
-                // 绘制图片（会与背景色混合透明像素）
-                tempCtx.drawImage(img, 0, 0, card.width, card.height);
-            } else {
-                // 直接绘制图片
-                tempCtx.drawImage(img, 0, 0, card.width, card.height);
-            }
-
-            // 获取图片数据
-            let imageData = tempCtx.getImageData(0, 0, card.width, card.height);
-            // 应用颜色深度过滤
-            imageData = processImageData(imageData, format);
-            const data = imageData.data;
-
-            // 计算当前图片的字节数
-            let pixelCount = card.width * card.height;
-            let bytesPerPixel = 3;
-            if (format === 'rgb565') {
-                bytesPerPixel = 2;
-            } else if (format === 'rgb332') {
-                bytesPerPixel = 1;
-            }
-
-            // 直接计算数据，避免使用push方法
-            let imageBytes = new Uint8Array(pixelCount * bytesPerPixel);
-            let byteIndex = 0;
-
-            // 逐行处理像素数据
-            for (let y = 0; y < card.height; y++) {
-                for (let x = 0; x < card.width; x++) {
-                    const index = (y * card.width + x) * 4;
-                    const r = data[index];
-                    const g = data[index + 1];
-                    const b = data[index + 2];
-
-                    if (format === 'rgb888') {
-                        // 检查RGB888反字序设置
-                        const isReverseOrder = document.getElementById('rgb888ReverseOrder').checked;
-                        if (isReverseOrder) {
-                            // BGR顺序
-                            imageBytes[byteIndex++] = b;
-                            imageBytes[byteIndex++] = g;
-                            imageBytes[byteIndex++] = r;
-                        } else {
-                            // RGB顺序
-                            imageBytes[byteIndex++] = r;
-                            imageBytes[byteIndex++] = g;
-                            imageBytes[byteIndex++] = b;
-                        }
-                    } else if (format === 'rgb565') {
-                        // RGB565格式：2字节
-                        const r5 = (r >> 3) & 0x1F;
-                        const g6 = (g >> 2) & 0x3F;
-                        const b5 = (b >> 3) & 0x1F;
-                        const value = (r5 << 11) | (g6 << 5) | b5;
-                        const lowByte = value & 0xFF;
-                        const highByte = (value >> 8) & 0xFF;
-
-                        // 检查字节顺序设置
-                        const isLittleEndian = document.getElementById('rgb565LittleEndian').checked;
-                        if (isLittleEndian) {
-                            // 低字节在前，高字节在后（小端序）
-                            imageBytes[byteIndex++] = lowByte;
-                            imageBytes[byteIndex++] = highByte;
-                        } else {
-                            // 高字节在前，低字节在后（大端序）
-                            imageBytes[byteIndex++] = highByte;
-                            imageBytes[byteIndex++] = lowByte;
-                        }
-                    } else if (format === 'rgb332') {
-                        // RGB332格式：1字节
-                        const r3 = (r >> 5) & 0x07;
-                        const g3 = (g >> 5) & 0x07;
-                        const b2 = (b >> 6) & 0x03;
-                        const value = (r3 << 5) | (g3 << 2) | b2;
-                        imageBytes[byteIndex++] = value;
-                    }
-                }
-            }
-
-            // 应用RLE压缩
-            let finalBytes = Array.from(imageBytes);
-            if (useRle) {
-                finalBytes = rleCompress(finalBytes, format);
-            }
-
-            return { finalBytes, imageBytes, format };
-        }
 
         // 转换所有图片
         async function convertAllImages() {
@@ -3009,7 +3242,7 @@
                             pixmapStructures += `const sgl_pixmap_t ${struct.name} = {\n`;
                             pixmapStructures += `    .width = ${struct.width},\n`;
                             pixmapStructures += `    .height = ${struct.height},\n`;
-                            pixmapStructures += `    .bitmap = ${struct.arrayPrefix}_data,\n`;
+                            pixmapStructures += `    .bitmap.array = ${struct.arrayPrefix}_data,\n`;
                             pixmapStructures += `    .format = ${struct.formatValue},\n`;
                             pixmapStructures += `};\n\n`;
                         }
@@ -3021,7 +3254,7 @@
                         pixmapStructures += `const sgl_pixmap_t ${struct.name} = {\n`;
                         pixmapStructures += `    .width = ${struct.width},\n`;
                         pixmapStructures += `    .height = ${struct.height},\n`;
-                        pixmapStructures += `    .bitmap = ${struct.arrayPrefix}_data,\n`;
+                        pixmapStructures += `    .bitmap.array = ${struct.arrayPrefix}_data,\n`;
                         pixmapStructures += `    .format = ${struct.formatValue},\n`;
                         pixmapStructures += `};\n\n`;
                     }
@@ -3051,7 +3284,7 @@
                     content += `    {\n`;
                     content += `        .width = ${struct.width},\n`;
                     content += `        .height = ${struct.height},\n`;
-                    content += `        .bitmap = ${struct.arrayPrefix}_data,\n`;
+                    content += `        .bitmap.array = ${struct.arrayPrefix}_data,\n`;
                     content += `        .format = ${struct.formatValue}\n`;
                     content += `    }${i < structs.length - 1 ? ',' : ''}\n`;
                 }
@@ -3167,25 +3400,6 @@
 
 `;
 
-            // 生成图片地址数组
-            content += `// 图片在BIN文件中的起始地址数组
-`;
-            content += `static const uint32_t ${filename}_img_addresses[] = {
-`;
-
-            for (let i = 0; i < imageInfo.length; i++) {
-                content += `    0x${imageInfo[i].startAddress.toString(16).padStart(8, '0')}`;
-                if (i < imageInfo.length - 1) {
-                    content += `,`;
-                }
-                content += ` // ${imageInfo[i].name}
-`;
-            }
-
-            content += `};
-
-`;
-
             // 生成sgl_pixmap_t结构体
             content += `// 图片数据结构体定义
 `;
@@ -3221,7 +3435,7 @@
 `;
                         content += `        .height = ${info.height},
 `;
-                        content += `        .bitmap = (const uint8_t*)&${filename}_img_addresses[${imageInfo.indexOf(info)}],
+                        content += `        .bitmap.addr = 0x${info.startAddress.toString(16).padStart(8, '0')}, // 图片在BIN文件中的起始地址
 `;
                         content += `        .format = ${info.format}
 `;
@@ -3243,7 +3457,7 @@
 `;
                         content += `    .height = ${info.height},
 `;
-                        content += `    .bitmap = (const uint8_t*)&${filename}_img_addresses[${imageInfo.indexOf(info)}],
+                        content += `    .bitmap.addr = 0x${info.startAddress.toString(16).padStart(8, '0')}, // 图片在BIN文件中的起始地址
 `;
                         content += `    .format = ${info.format},
 `;
@@ -3270,6 +3484,10 @@
                 bytesPerPixel = 2;
             } else if (colorFormat === 'rgb332') {
                 bytesPerPixel = 1;
+            } else if (colorFormat === 'argb8888') {
+                bytesPerPixel = 4;
+            } else if (colorFormat === 'argb4444') {
+                bytesPerPixel = 2;
             }
 
             const compressed = [];
@@ -3387,52 +3605,91 @@
             for (let y = 0; y < card.height; y++) {
                 for (let x = 0; x < card.width; x++) {
                     const index = (y * card.width + x) * 4;
-                    const r = data[index];
-                    const g = data[index + 1];
-                    const b = data[index + 2];
+                    let r = data[index];
+                    let g = data[index + 1];
+                    let b = data[index + 2];
+                    const a = data[index + 3]; // 透明度通道
 
-                    if (format === 'rgb888') {
-                        // 检查RGB888反字序设置
-                        const isReverseOrder = document.getElementById('rgb888ReverseOrder').checked;
-                        if (isReverseOrder) {
-                            // BGR顺序
-                            pixelBytes.push(b);
-                            pixelBytes.push(g);
-                            pixelBytes.push(r);
-                        } else {
-                            // RGB顺序
-                            pixelBytes.push(r);
-                            pixelBytes.push(g);
-                            pixelBytes.push(b);
-                        }
-                    } else if (format === 'rgb565') {
-                        // RGB565格式：2字节
-                        const r5 = (r >> 3) & 0x1F;
-                        const g6 = (g >> 2) & 0x3F;
-                        const b5 = (b >> 3) & 0x1F;
-                        const value = (r5 << 11) | (g6 << 5) | b5;
-                        const lowByte = value & 0xFF;
-                        const highByte = (value >> 8) & 0xFF;
+                        // 普通模式
+                        if (format === 'rgb888') {
+                            // 检查反字序设置
+                            const isReverseOrder = document.getElementById('reverseOrder').checked;
+                            if (isReverseOrder) {
+                                // BGR顺序
+                                pixelBytes.push(b);
+                                pixelBytes.push(g);
+                                pixelBytes.push(r);
+                            } else {
+                                // RGB顺序
+                                pixelBytes.push(r);
+                                pixelBytes.push(g);
+                                pixelBytes.push(b);
+                            }
+                        } else if (format === 'rgb565') {
+                            // RGB565格式：2字节
+                            const r5 = (r >> 3) & 0x1F;
+                            const g6 = (g >> 2) & 0x3F;
+                            const b5 = (b >> 3) & 0x1F;
+                            const value = (r5 << 11) | (g6 << 5) | b5;
+                            const lowByte = value & 0xFF;
+                            const highByte = (value >> 8) & 0xFF;
 
-                        // 检查字节顺序设置
-                        const isLittleEndian = document.getElementById('rgb565LittleEndian').checked;
-                        if (isLittleEndian) {
-                            // 低字节在前，高字节在后（小端序）
-                            pixelBytes.push(lowByte);
-                            pixelBytes.push(highByte);
-                        } else {
-                            // 高字节在前，低字节在后（大端序）
-                            pixelBytes.push(highByte);
-                            pixelBytes.push(lowByte);
+                            // 检查反字序设置
+                            const isLittleEndian = document.getElementById('reverseOrder').checked;
+                            if (isLittleEndian) {
+                                // 低字节在前，高字节在后（小端序）
+                                pixelBytes.push(lowByte);
+                                pixelBytes.push(highByte);
+                            } else {
+                                // 高字节在前，低字节在后（大端序）
+                                pixelBytes.push(highByte);
+                                pixelBytes.push(lowByte);
+                            }
+                        } else if (format === 'rgb332') {
+                            // RGB332格式：1字节
+                            const r3 = (r >> 5) & 0x07;
+                            const g3 = (g >> 5) & 0x07;
+                            const b2 = (b >> 6) & 0x03;
+                            const value = (r3 << 5) | (g3 << 2) | b2;
+                            pixelBytes.push(value);
+                        } else if (format === 'argb8888') {
+                            // 检查反字序设置
+                            const isReverseOrder = document.getElementById('reverseOrder').checked;
+                            if (isReverseOrder) {
+                                // B+G+R+A顺序
+                                pixelBytes.push(b);
+                                pixelBytes.push(g);
+                                pixelBytes.push(r);
+                                pixelBytes.push(a);
+                            } else {
+                                // A+R+G+B顺序
+                                pixelBytes.push(a);
+                                pixelBytes.push(r);
+                                pixelBytes.push(g);
+                                pixelBytes.push(b);
+                            }
+                        } else if (format === 'argb4444') {
+                            // ARGB4444格式：2字节，A(4bit),R(4bit),G(4bit),B(4bit)
+                            const a4 = (a >> 4) & 0x0F;
+                            const r4 = (r >> 4) & 0x0F;
+                            const g4 = (g >> 4) & 0x0F;
+                            const b4 = (b >> 4) & 0x0F;
+                            const value = (a4 << 12) | (r4 << 8) | (g4 << 4) | b4;
+                            const lowByte = value & 0xFF;
+                            const highByte = (value >> 8) & 0xFF;
+                            
+                            // 检查反字序设置
+                            const isReverseOrder = document.getElementById('reverseOrder').checked;
+                            if (isReverseOrder) {
+                                // 低字节在前，高字节在后（小端序）
+                                pixelBytes.push(lowByte);
+                                pixelBytes.push(highByte);
+                            } else {
+                                // 高字节在前，低字节在后（大端序）
+                                pixelBytes.push(highByte);
+                                pixelBytes.push(lowByte);
+                            }
                         }
-                    } else if (format === 'rgb332') {
-                        // RGB332格式：1字节
-                        const r3 = (r >> 5) & 0x07;
-                        const g3 = (g >> 5) & 0x07;
-                        const b2 = (b >> 6) & 0x03;
-                        const value = (r3 << 5) | (g3 << 2) | b2;
-                        pixelBytes.push(value);
-                    }
                 }
             }
 
@@ -3476,6 +3733,10 @@
                     formatValue = 'SGL_PIXMAP_FMT_RLE_RGB565';
                 } else if (format === 'rgb332') {
                     formatValue = 'SGL_PIXMAP_FMT_RLE_RGB332';
+                } else if (format === 'argb8888') {
+                    formatValue = 'SGL_PIXMAP_FMT_RLE_ARGB8888';
+                } else if (format === 'argb4444') {
+                    formatValue = 'SGL_PIXMAP_FMT_RLE_ARGB4444';
                 }
             } else {
                 if (format === 'rgb888') {
@@ -3484,6 +3745,10 @@
                     formatValue = 'SGL_PIXMAP_FMT_RGB565';
                 } else if (format === 'rgb332') {
                     formatValue = 'SGL_PIXMAP_FMT_RGB332';
+                } else if (format === 'argb8888') {
+                    formatValue = 'SGL_PIXMAP_FMT_ARGB8888';
+                } else if (format === 'argb4444') {
+                    formatValue = 'SGL_PIXMAP_FMT_ARGB4444';
                 }
             }
 
@@ -3562,6 +3827,10 @@
                 bytesPerPixel = 2;
             } else if (format === 'rgb332') {
                 bytesPerPixel = 1;
+            } else if (format === 'argb8888') {
+                bytesPerPixel = 4;
+            } else if (format === 'argb4444') {
+                bytesPerPixel = 2;
             }
 
             // 直接计算数据，避免使用push方法
@@ -3572,52 +3841,91 @@
             for (let y = 0; y < card.height; y++) {
                 for (let x = 0; x < card.width; x++) {
                     const index = (y * card.width + x) * 4;
-                    const r = data[index];
-                    const g = data[index + 1];
-                    const b = data[index + 2];
+                    let r = data[index];
+                    let g = data[index + 1];
+                    let b = data[index + 2];
+                    const a = data[index + 3]; // 透明度通道
 
-                    if (format === 'rgb888') {
-                        // 检查RGB888反字序设置
-                        const isReverseOrder = document.getElementById('rgb888ReverseOrder').checked;
-                        if (isReverseOrder) {
-                            // BGR顺序
-                            imageBytes[byteIndex++] = b;
-                            imageBytes[byteIndex++] = g;
-                            imageBytes[byteIndex++] = r;
-                        } else {
-                            // RGB顺序
-                            imageBytes[byteIndex++] = r;
-                            imageBytes[byteIndex++] = g;
-                            imageBytes[byteIndex++] = b;
-                        }
-                    } else if (format === 'rgb565') {
-                        // RGB565格式：2字节
-                        const r5 = (r >> 3) & 0x1F;
-                        const g6 = (g >> 2) & 0x3F;
-                        const b5 = (b >> 3) & 0x1F;
-                        const value = (r5 << 11) | (g6 << 5) | b5;
-                        const lowByte = value & 0xFF;
-                        const highByte = (value >> 8) & 0xFF;
+                        // 普通模式
+                        if (format === 'rgb888') {
+                            // 检查反字序设置
+                            const isReverseOrder = document.getElementById('reverseOrder').checked;
+                            if (isReverseOrder) {
+                                // BGR顺序
+                                imageBytes[byteIndex++] = b;
+                                imageBytes[byteIndex++] = g;
+                                imageBytes[byteIndex++] = r;
+                            } else {
+                                // RGB顺序
+                                imageBytes[byteIndex++] = r;
+                                imageBytes[byteIndex++] = g;
+                                imageBytes[byteIndex++] = b;
+                            }
+                        } else if (format === 'rgb565') {
+                            // RGB565格式：2字节
+                            const r5 = (r >> 3) & 0x1F;
+                            const g6 = (g >> 2) & 0x3F;
+                            const b5 = (b >> 3) & 0x1F;
+                            const value = (r5 << 11) | (g6 << 5) | b5;
+                            const lowByte = value & 0xFF;
+                            const highByte = (value >> 8) & 0xFF;
 
-                        // 检查字节顺序设置
-                        const isLittleEndian = document.getElementById('rgb565LittleEndian').checked;
-                        if (isLittleEndian) {
-                            // 低字节在前，高字节在后（小端序）
-                            imageBytes[byteIndex++] = lowByte;
-                            imageBytes[byteIndex++] = highByte;
-                        } else {
-                            // 高字节在前，低字节在后（大端序）
-                            imageBytes[byteIndex++] = highByte;
-                            imageBytes[byteIndex++] = lowByte;
+                            // 检查反字序设置
+                            const isLittleEndian = document.getElementById('reverseOrder').checked;
+                            if (isLittleEndian) {
+                                // 低字节在前，高字节在后（小端序）
+                                imageBytes[byteIndex++] = lowByte;
+                                imageBytes[byteIndex++] = highByte;
+                            } else {
+                                // 高字节在前，低字节在后（大端序）
+                                imageBytes[byteIndex++] = highByte;
+                                imageBytes[byteIndex++] = lowByte;
+                            }
+                        } else if (format === 'rgb332') {
+                            // RGB332格式：1字节
+                            const r3 = (r >> 5) & 0x07;
+                            const g3 = (g >> 5) & 0x07;
+                            const b2 = (b >> 6) & 0x03;
+                            const value = (r3 << 5) | (g3 << 2) | b2;
+                            imageBytes[byteIndex++] = value;
+                        } else if (format === 'argb8888') {
+                            // 检查反字序设置
+                            const isReverseOrder = document.getElementById('reverseOrder').checked;
+                            if (isReverseOrder) {
+                                // B+G+R+A顺序
+                                imageBytes[byteIndex++] = b;
+                                imageBytes[byteIndex++] = g;
+                                imageBytes[byteIndex++] = r;
+                                imageBytes[byteIndex++] = a;
+                            } else {
+                                // A+R+G+B顺序
+                                imageBytes[byteIndex++] = a;
+                                imageBytes[byteIndex++] = r;
+                                imageBytes[byteIndex++] = g;
+                                imageBytes[byteIndex++] = b;
+                            }
+                        } else if (format === 'argb4444') {
+                            // ARGB4444格式：2字节，A(4bit),R(4bit),G(4bit),B(4bit)
+                            const a4 = (a >> 4) & 0x0F;
+                            const r4 = (r >> 4) & 0x0F;
+                            const g4 = (g >> 4) & 0x0F;
+                            const b4 = (b >> 4) & 0x0F;
+                            const value = (a4 << 12) | (r4 << 8) | (g4 << 4) | b4;
+                            const lowByte = value & 0xFF;
+                            const highByte = (value >> 8) & 0xFF;
+                            
+                            // 检查反字序设置
+                            const isReverseOrder = document.getElementById('reverseOrder').checked;
+                            if (isReverseOrder) {
+                                // 低字节在前，高字节在后（小端序）
+                                imageBytes[byteIndex++] = lowByte;
+                                imageBytes[byteIndex++] = highByte;
+                            } else {
+                                // 高字节在前，低字节在后（大端序）
+                                imageBytes[byteIndex++] = highByte;
+                                imageBytes[byteIndex++] = lowByte;
+                            }
                         }
-                    } else if (format === 'rgb332') {
-                        // RGB332格式：1字节
-                        const r3 = (r >> 5) & 0x07;
-                        const g3 = (g >> 5) & 0x07;
-                        const b2 = (b >> 6) & 0x03;
-                        const value = (r3 << 5) | (g3 << 2) | b2;
-                        imageBytes[byteIndex++] = value;
-                    }
                 }
             }
 
@@ -3643,6 +3951,10 @@
                     formatValue = 'SGL_PIXMAP_FMT_RLE_RGB565';
                 } else if (format === 'rgb332') {
                     formatValue = 'SGL_PIXMAP_FMT_RLE_RGB332';
+                } else if (format === 'argb8888') {
+                    formatValue = 'SGL_PIXMAP_FMT_RLE_ARGB8888';
+                } else if (format === 'argb4444') {
+                    formatValue = 'SGL_PIXMAP_FMT_RLE_ARGB4444';
                 }
             } else {
                 if (format === 'rgb888') {
@@ -3651,6 +3963,10 @@
                     formatValue = 'SGL_PIXMAP_FMT_RGB565';
                 } else if (format === 'rgb332') {
                     formatValue = 'SGL_PIXMAP_FMT_RGB332';
+                } else if (format === 'argb8888') {
+                    formatValue = 'SGL_PIXMAP_FMT_ARGB8888';
+                } else if (format === 'argb4444') {
+                    formatValue = 'SGL_PIXMAP_FMT_ARGB4444';
                 }
             }
 
