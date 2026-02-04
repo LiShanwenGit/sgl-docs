@@ -435,22 +435,7 @@
             box-shadow: 0 2px 4px rgba(79, 172, 254, 0.3);
         }
 
-        /* 滚动按钮样式 */
-        .scroll-btn {
-            opacity: 0 !important;
-            transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-        }
 
-        /* 滚动按钮悬停显示效果 - 仅在图片数量大于3张时生效 */
-        [data-card-index] .images-less-than-4 .scroll-btn {
-            opacity: 0 !important;
-            display: none !important;
-        }
-
-        /* 当图片数量足够时，悬停显示滚动按钮 */
-        [data-card-index] :not(.images-less-than-4):hover .scroll-btn {
-            opacity: 1 !important;
-        }
 
         @media (max-width: 768px) {
             .main-content {
@@ -605,6 +590,7 @@
                             <option value="rgb332">RGB332</option>
                             <option value="argb8888">ARGB8888</option>
                             <option value="argb4444">ARGB4444</option>
+                            <option value="argb2222">ARGB2222</option>
                         </select>
                     </div>
                     <div class="select-group">
@@ -690,8 +676,11 @@
                         </div>
                     </div>
 
-                    <!-- 转换按钮 -->
-                    <button id="convertBtn" class="convert-btn" disabled>开始转换</button>
+                    <!-- 按钮容器 -->
+                    <div style="display: flex; gap: 15px;">
+                        <button id="exportPreviewBtn" class="convert-btn" disabled style="flex: 1;">导出预览</button>
+                        <button id="convertBtn" class="convert-btn" disabled style="flex: 1;">开始转换</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -699,29 +688,32 @@
 
     </div>
 
+    <!-- 导出预览弹窗 -->
+    <div id="previewModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 10000; justify-content: center; align-items: center;">
+        <div id="previewModalContent" style="background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); overflow: hidden; max-width: 80vw; max-height: 90vh;">
+            <!-- 弹窗头部 -->
+            <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 20px; display: flex; justify-content: space-between; align-items: center; color: white;">
+                <h2 style="margin: 0; font-size: 1.5em; font-weight: 700;">导出预览</h2>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button id="copyButton" style="padding: 10px 20px; background: rgba(255, 255, 255, 0.9); color: #4facfe; border: none; border-radius: 8px; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">一键复制</button>
+                    <button id="closeModalButton" style="padding: 10px 20px; background: rgba(255, 87, 34, 0.9); color: white; border: none; border-radius: 8px; font-size: 0.9em; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">关闭</button>
+                </div>
+            </div>
+
+            <!-- 标签页 -->
+            <div id="previewTabs" style="display: flex; background: #f8f9fa; border-bottom: 2px solid #e0e0e0;"></div>
+
+            <!-- 预览内容 -->
+            <div id="previewContent" style="padding: 20px; max-height: 70vh; overflow: auto;">
+                <pre id="codePreview" style="background: #f0f0f0; padding: 20px; border-radius: 12px; font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 16px; line-height: 1.4; white-space: pre; max-height: 60vh; overflow: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;"></pre>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // 标签页切换功能
-        document.addEventListener('DOMContentLoaded', function() {
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const tabContents = document.querySelectorAll('.tab-content');
 
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const targetTab = button.getAttribute('data-tab');
-
-                    // 移除所有活动状态
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    tabContents.forEach(content => content.classList.remove('active'));
-
-                    // 添加当前活动状态
-                    button.classList.add('active');
-                    document.getElementById(targetTab).classList.add('active');
-                });
-            });
-        });
         // 全局变量
         let cards = [];
-        let nextCardId = 1;
 
         // 单张图片数据结构
         class ImageItem {
@@ -789,18 +781,22 @@
             const convertBtn = document.getElementById('convertBtn');
             convertBtn.addEventListener('click', convertAllImages);
 
+            // 导出预览按钮事件
+            const exportPreviewBtn = document.getElementById('exportPreviewBtn');
+            exportPreviewBtn.addEventListener('click', exportPreview);
+
             // 颜色格式变化事件
             const colorFormatSelect = document.getElementById('colorFormat');
             colorFormatSelect.addEventListener('change', function() {
                 updateChannelValuesByFormat();
                 updateAllOutputDetails();
-                
+
                 // 控制透明填充选项的状态
                 const transparentFillCheckbox = document.getElementById('transparentFill');
                 const fillColorInput = document.getElementById('fillColor');
                 const colorPreview = document.getElementById('colorPreview');
-                
-                if (this.value === 'argb8888' || this.value === 'argb4444') {
+
+                if (this.value === 'argb8888' || this.value === 'argb4444' || this.value === 'argb2222') {
                     // ARGB格式不需要透明填充
                     transparentFillCheckbox.checked = false;
                     transparentFillCheckbox.disabled = true;
@@ -813,18 +809,25 @@
                     fillColorInput.disabled = false;
                     colorPreview.style.opacity = '1';
                 }
+
+                // 重新检查按钮状态
+                checkConvertButtonState();
             });
 
             // 输出格式变化事件
             const outputFormatSelect = document.getElementById('outputFormat');
             outputFormatSelect.addEventListener('change', function() {
                 updateAllOutputDetails();
+                // 重新检查按钮状态
+                checkConvertButtonState();
             });
 
             // 压缩算法变化事件
             const compressionAlgorithmSelect = document.getElementById('compressionAlgorithm');
             compressionAlgorithmSelect.addEventListener('change', function() {
                 updateAllOutputDetails();
+                // 重新检查按钮状态
+                checkConvertButtonState();
             });
 
             // 颜色深度滑块事件
@@ -842,6 +845,8 @@
                 updateColorDepthValue();
                 updateAllOutputPreviews();
                 updateAllOutputDetails();
+                // 重新检查按钮状态
+                checkConvertButtonState();
             });
 
             gSlider.addEventListener('input', function() {
@@ -853,6 +858,8 @@
                 updateColorDepthValue();
                 updateAllOutputPreviews();
                 updateAllOutputDetails();
+                // 重新检查按钮状态
+                checkConvertButtonState();
             });
 
             bSlider.addEventListener('input', function() {
@@ -864,6 +871,8 @@
                 updateColorDepthValue();
                 updateAllOutputPreviews();
                 updateAllOutputDetails();
+                // 重新检查按钮状态
+                checkConvertButtonState();
             });
 
             // 初始化颜色深度显示
@@ -873,7 +882,7 @@
             const transparentFillCheckbox = document.getElementById('transparentFill');
             const fillColorInput = document.getElementById('fillColor');
             const colorPreview = document.getElementById('colorPreview');
-            
+
             // 初始化透明填充选项的状态
             const initialColorFormat = document.getElementById('colorFormat').value;
             if (initialColorFormat === 'argb8888' || initialColorFormat === 'argb4444') {
@@ -944,11 +953,11 @@
                 const containerElement = cardElement.querySelector('.preview-canvas-container');
                 const containerWidth = containerElement.clientWidth;
                 const containerHeight = containerElement.clientHeight;
-                
+
                 // 计算实际内容宽度（考虑grid布局的gap）
                 let canvasWidth = originalContainer.scrollWidth;
                 let canvasHeight = originalContainer.scrollHeight;
-                
+
                 // 修复：当图片数量少于9张时，计算实际内容宽度
                 const imageCount = originalContainer.children.length;
                 if (imageCount > 0 && imageCount < 9) {
@@ -983,11 +992,11 @@
                 const containerElement = cardElement.querySelector('.preview-canvas-container');
                 const containerWidth = containerElement.clientWidth;
                 const containerHeight = containerElement.clientHeight;
-                
+
                 // 计算实际内容宽度（考虑grid布局的gap）
                 let canvasWidth = outputContainer.scrollWidth;
                 let canvasHeight = outputContainer.scrollHeight;
-                
+
                 // 修复：当图片数量少于9张时，计算实际内容宽度
                 const imageCount = outputContainer.children.length;
                 if (imageCount > 0 && imageCount < 9) {
@@ -1303,6 +1312,8 @@
                 bytesPerPixel = 4;
             } else if (colorFormat === 'argb4444') {
                 bytesPerPixel = 2;
+            } else if (colorFormat === 'argb2222') {
+                bytesPerPixel = 1;
             }
 
             // 计算单张图片的大小
@@ -1427,7 +1438,7 @@
                             const value = (a4 << 12) | (r4 << 8) | (g4 << 4) | b4;
                             const lowByte = value & 0xFF;
                             const highByte = (value >> 8) & 0xFF;
-                            
+
                             // 检查反字序设置
                             const isReverseOrder = document.getElementById('reverseOrder').checked;
                             if (isReverseOrder) {
@@ -1439,6 +1450,14 @@
                                 pixelBytes.push(highByte);
                                 pixelBytes.push(lowByte);
                             }
+                        } else if (colorFormat === 'argb2222') {
+                            // ARGB2222格式：1字节，A(2bit),R(2bit),G(2bit),B(2bit)
+                            const a2 = (a >> 6) & 0x03;
+                            const r2 = (r >> 6) & 0x03;
+                            const g2 = (g >> 6) & 0x03;
+                            const b2 = (b >> 6) & 0x03;
+                            const value = (a2 << 6) | (r2 << 4) | (g2 << 2) | b2;
+                            pixelBytes.push(value);
                         }
                     }
 
@@ -1484,7 +1503,7 @@
             const b = document.getElementById('bDepth').value;
             const colorFormat = document.getElementById('colorFormat').value;
             const colorDepthValue = document.getElementById('colorDepthValue');
-            
+
             if (colorFormat === 'argb8888' || colorFormat === 'argb4444') {
                 colorDepthValue.textContent = `ARGB${r}${g}${b}`;
             } else {
@@ -1516,6 +1535,11 @@
                 rMax = 4;
                 gMax = 4;
                 bMax = 4;
+            } else if (colorFormat === 'argb2222') {
+                // ARGB2222格式，各通道都是2位
+                rMax = 2;
+                gMax = 2;
+                bMax = 2;
             }
 
             return { rMax, gMax, bMax };
@@ -1559,7 +1583,7 @@
             if (!cardElement) return;
 
             // 获取原图预览和输出预览的容器
-            const previewContainers = cardElement.querySelectorAll('.preview-scroll-container');
+            const previewContainers = cardElement.querySelectorAll('.preview-canvas-container');
             if (previewContainers.length < 2) return;
 
             // 设置高度
@@ -1676,7 +1700,7 @@
 
                 // 清空现有预览
                 previewContainer.innerHTML = '';
-                
+
                 // 暂时隐藏预览容器，避免用户看到图片加载过程
                 previewContainer.style.opacity = '0';
                 previewContainer.style.visibility = 'hidden';
@@ -1844,7 +1868,7 @@
 
                 // 清空现有预览
                 outputContainer.innerHTML = '';
-                
+
                 // 暂时隐藏预览容器，避免用户看到图片加载过程
                 outputContainer.style.opacity = '0';
                 outputContainer.style.visibility = 'hidden';
@@ -2017,328 +2041,9 @@
             });
         }
 
-        // 调整滚动位置，确保始终显示有效的图片内容
-        function adjustScrollPosition(cardIndex) {
-            const cardElement = document.querySelector(`[data-card-index="${cardIndex}"]`);
 
-            // 获取两个预览容器
-            const scrollContainers = cardElement.querySelectorAll('.preview-scroll-container');
-            if (scrollContainers.length < 2) return;
 
-            const originalPreviewContainer = scrollContainers[0];
-            const originalImagesContainer = originalPreviewContainer.querySelector('.preview-images');
-            const outputImagesContainer = scrollContainers[1].querySelector('.output-preview-images');
 
-            // 获取容器尺寸和图片数量
-            const containerWidth = originalPreviewContainer.clientWidth;
-            const imageCount = cards[cardIndex].images.length;
-            const firstImage = originalImagesContainer.firstElementChild;
-
-            if (!firstImage) return;
-
-            // 计算每张图片的宽度（包含边距）
-            const imageWidthWithMargin = firstImage.clientWidth + 10; // 5px margin on each side
-
-            // 计算可见图片数量（固定为3张）
-            const visibleImages = 3;
-
-            // 计算最大滚动位置（索引）
-            const maxScrollIndex = Math.max(0, imageCount - visibleImages);
-
-            // 计算当前滚动位置（像素）
-            const currentTransform = originalImagesContainer.style.transform;
-            let currentScrollPixels = 0;
-            if (currentTransform) {
-                const match = currentTransform.match(/translateX\((-?\d+)px\)/);
-                if (match) {
-                    currentScrollPixels = parseInt(match[1]);
-                }
-            }
-
-            // 计算当前滚动索引
-            let currentScrollIndex = Math.abs(Math.round(currentScrollPixels / imageWidthWithMargin));
-
-            // 检查当前滚动位置是否超出最大滚动索引
-            if (currentScrollIndex > maxScrollIndex) {
-                // 调整滚动索引到最大有效值
-                currentScrollIndex = maxScrollIndex;
-
-                // 应用调整后的滚动位置
-                const newTransform = `translateX(${-currentScrollIndex * imageWidthWithMargin}px)`;
-                originalImagesContainer.style.transform = newTransform;
-                outputImagesContainer.style.transform = newTransform;
-            }
-        }
-
-        // 初始化滚动功能
-        function initScrollFunctionality(cardIndex) {
-            const cardElement = document.querySelector(`[data-card-index="${cardIndex}"]`);
-
-            // 获取所有预览滚动容器和滚动按钮
-            const previewContainers = cardElement.querySelectorAll('.preview-scroll-container');
-            const scrollButtons = cardElement.querySelectorAll('.scroll-btn');
-
-            if (previewContainers.length < 2 || scrollButtons.length < 4) return;
-
-            // 原图预览滚动（第一个预览容器）
-            const originalPreviewContainer = previewContainers[0];
-            const originalImagesContainer = originalPreviewContainer.querySelector('.preview-images');
-
-            // 输出预览滚动（第二个预览容器）
-            const outputPreviewContainer = previewContainers[1];
-            const outputImagesContainer = outputPreviewContainer.querySelector('.output-preview-images');
-
-            // 获取所有滚动按钮
-            const allLeftBtns = cardElement.querySelectorAll('.scroll-left');
-            const allRightBtns = cardElement.querySelectorAll('.scroll-right');
-
-            // 移除旧的事件监听器，避免多次绑定
-            allLeftBtns.forEach(btn => {
-                // 克隆按钮并保留class属性
-                const clone = btn.cloneNode(true);
-                // 确保克隆的按钮也有正确的初始样式
-                clone.style.opacity = '0';
-                btn.replaceWith(clone);
-            });
-
-            allRightBtns.forEach(btn => {
-                // 克隆按钮并保留class属性
-                const clone = btn.cloneNode(true);
-                // 确保克隆的按钮也有正确的初始样式
-                clone.style.opacity = '0';
-                btn.replaceWith(clone);
-            });
-
-            // 更新按钮引用
-            const updatedLeftBtns = cardElement.querySelectorAll('.scroll-left');
-            const updatedRightBtns = cardElement.querySelectorAll('.scroll-right');
-
-            // 计算可见图片数量（使用第一个容器作为参考）
-            function getVisibleImageCount() {
-                const containerWidth = originalPreviewContainer.clientWidth;
-                const firstImage = originalImagesContainer.firstElementChild;
-                if (!firstImage) return 0;
-                const imageWidth = firstImage.clientWidth + 10; // 包含边距
-                return Math.max(1, Math.floor(containerWidth / imageWidth));
-            }
-
-            // 获取当前滚动位置（从transform属性中读取）
-            function getCurrentScrollIndex() {
-                const firstImage = originalImagesContainer.firstElementChild;
-                if (!firstImage) return 0;
-
-                const imageWidth = firstImage.clientWidth + 10; // 包含边距
-                const currentTransform = originalImagesContainer.style.transform;
-                let currentScrollPixels = 0;
-
-                if (currentTransform) {
-                    const match = currentTransform.match(/translateX\((-?\d+)px\)/);
-                    if (match) {
-                        currentScrollPixels = parseInt(match[1]);
-                    }
-                }
-
-                return Math.max(0, Math.round(Math.abs(currentScrollPixels) / imageWidth));
-            }
-
-            // 同步滚动到指定索引
-            function scrollToIndex(index) {
-                // 获取第一个图片的宽度作为参考
-                const firstImage = originalImagesContainer.firstElementChild;
-                if (!firstImage) return;
-
-                const imageWidth = firstImage.clientWidth + 10; // 包含边距
-                const visibleCount = getVisibleImageCount();
-                const totalImages = Math.max(originalImagesContainer.children.length, outputImagesContainer.children.length);
-                const maxScroll = Math.max(0, totalImages - visibleCount);
-
-                // 获取当前实际滚动索引
-                const currentIndex = getCurrentScrollIndex();
-
-                // 检查是否需要回弹：只有当当前已经在边界，且尝试继续超出边界时才回弹
-                const isAtLeftBoundary = currentIndex === 0;
-                const isAtRightBoundary = currentIndex === maxScroll;
-                const tryingToGoLeft = index < currentIndex;
-                const tryingToGoRight = index > currentIndex;
-                const needBounce = (isAtLeftBoundary && tryingToGoLeft) || (isAtRightBoundary && tryingToGoRight);
-
-                if (needBounce) {
-                    // 检查是否正在执行回弹动画，如果是则直接返回
-                    if (originalImagesContainer.style.transition.includes('ease')) {
-                        // 停止自动滚动，避免持续回弹
-                        stopAutoScroll();
-                        return;
-                    }
-
-                    let bounceOffset = 0;
-
-                    // 计算回弹偏移量
-                    if (isAtLeftBoundary) {
-                        // 左边界回弹 - 向右移动
-                        bounceOffset = 0.2 * imageWidth;
-                    } else if (isAtRightBoundary) {
-                        // 右边界回弹 - 向左移动
-                        bounceOffset = -0.2 * imageWidth;
-                    }
-
-                    // 应用回弹效果，使用CSS过渡动画
-                    const bouncePosition = -currentIndex * imageWidth + bounceOffset;
-                    originalImagesContainer.style.transition = 'transform 0.15s ease';
-                    outputImagesContainer.style.transition = 'transform 0.15s ease';
-                    originalImagesContainer.style.transform = `translateX(${bouncePosition}px)`;
-                    outputImagesContainer.style.transform = `translateX(${bouncePosition}px)`;
-
-                    // 回弹后恢复到边界位置
-                    setTimeout(() => {
-                        originalImagesContainer.style.transform = `translateX(${-currentIndex * imageWidth}px)`;
-                        outputImagesContainer.style.transform = `translateX(${-currentIndex * imageWidth}px)`;
-                        // 清除过渡效果，避免影响后续滚动
-                        setTimeout(() => {
-                            originalImagesContainer.style.transition = '';
-                            outputImagesContainer.style.transition = '';
-                        }, 150);
-                    }, 150);
-
-                    // 停止自动滚动，避免持续回弹
-                    stopAutoScroll();
-                } else {
-                    // 计算目标索引（限制在有效范围内）
-                    let targetIndex = index;
-                    if (targetIndex < 0) {
-                        targetIndex = 0;
-                    } else if (targetIndex > maxScroll) {
-                        targetIndex = maxScroll;
-                    }
-
-                    // 正常滚动：只有当目标索引与当前索引不同时才执行滚动
-                    if (targetIndex !== currentIndex) {
-                        // 为正常滚动添加平滑过渡动画
-                        originalImagesContainer.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                        outputImagesContainer.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-                        const finalTransform = `translateX(${-targetIndex * imageWidth}px)`;
-                        originalImagesContainer.style.transform = finalTransform;
-                        outputImagesContainer.style.transform = finalTransform;
-                    }
-                }
-            }
-
-            // 滚动一个单位
-            function scrollOneStep(direction) {
-                const currentIndex = getCurrentScrollIndex();
-                scrollToIndex(currentIndex + direction * 1);
-            }
-
-            // 开始自动滚动
-            let isScrolling = false;
-            let scrollInterval = null;
-            const scrollSpeed = 200; // 滚动速度（毫秒/次）
-
-            function startAutoScroll(direction) {
-                if (isScrolling) return;
-
-                isScrolling = true;
-
-                scrollInterval = setInterval(() => {
-                    scrollOneStep(direction);
-                }, scrollSpeed);
-            }
-
-            // 停止自动滚动
-            function stopAutoScroll() {
-                isScrolling = false;
-                if (scrollInterval) {
-                    clearInterval(scrollInterval);
-                    scrollInterval = null;
-                }
-            }
-
-            // 长按状态跟踪
-            let isLongPress = false;
-            let longPressTimeout = null;
-
-            // 为所有左按钮添加事件
-            updatedLeftBtns.forEach(btn => {
-                // 鼠标按下事件
-                btn.addEventListener('mousedown', () => {
-                    // 标记为可能的长按
-                    isLongPress = false;
-                    // 设置长按超时
-                    longPressTimeout = setTimeout(() => {
-                        isLongPress = true;
-                        startAutoScroll(-1);
-                    }, 200); // 200ms 后视为长按
-                    // 立即执行一次滚动
-                    scrollOneStep(-1);
-                });
-
-                // 点击事件（仅处理短按）
-                btn.addEventListener('click', (e) => {
-                    // 如果是长按，则忽略点击事件
-                    if (isLongPress) {
-                        e.preventDefault();
-                        isLongPress = false;
-                        return;
-                    }
-                    // 清除长按超时
-                    if (longPressTimeout) {
-                        clearTimeout(longPressTimeout);
-                        longPressTimeout = null;
-                    }
-                });
-            });
-
-            // 为所有右按钮添加事件
-            updatedRightBtns.forEach(btn => {
-                // 鼠标按下事件
-                btn.addEventListener('mousedown', () => {
-                    // 标记为可能的长按
-                    isLongPress = false;
-                    // 设置长按超时
-                    longPressTimeout = setTimeout(() => {
-                        isLongPress = true;
-                        startAutoScroll(1);
-                    }, 200); // 200ms 后视为长按
-                    // 立即执行一次滚动
-                    scrollOneStep(1);
-                });
-
-                // 点击事件（仅处理短按）
-                btn.addEventListener('click', (e) => {
-                    // 如果是长按，则忽略点击事件
-                    if (isLongPress) {
-                        e.preventDefault();
-                        isLongPress = false;
-                        return;
-                    }
-                    // 清除长按超时
-                    if (longPressTimeout) {
-                        clearTimeout(longPressTimeout);
-                        longPressTimeout = null;
-                    }
-                });
-            });
-
-            // 停止长按滚动
-            function handleMouseUpOrLeave() {
-                // 清除长按超时
-                if (longPressTimeout) {
-                    clearTimeout(longPressTimeout);
-                    longPressTimeout = null;
-                }
-                // 停止自动滚动
-                stopAutoScroll();
-                // 重置长按状态
-                isLongPress = false;
-            }
-
-            document.addEventListener('mouseup', handleMouseUpOrLeave);
-            document.addEventListener('mouseleave', handleMouseUpOrLeave);
-
-            // 为所有按钮添加鼠标离开事件
-            [...updatedLeftBtns, ...updatedRightBtns].forEach(btn => {
-                btn.addEventListener('mouseleave', handleMouseUpOrLeave);
-            });
-        }
 
         // 初始化卡片事件
         function initCard(cardIndex) {
@@ -2853,6 +2558,9 @@
             // 更新输出预览和输出详情
             updateOutputPreview(cardIndex);
             updateOutputDetails(cardIndex);
+
+            // 重新检查按钮状态
+            checkConvertButtonState();
         }
 
         // 处理高度变化
@@ -2882,6 +2590,9 @@
             // 更新输出预览和输出详情
             updateOutputPreview(cardIndex);
             updateOutputDetails(cardIndex);
+
+            // 重新检查按钮状态
+            checkConvertButtonState();
         }
 
         // 处理锁定比例变化
@@ -2981,20 +2692,64 @@
             return true;
         }
 
-        // 检查是否可以转换
+        // 检查是否可以转换和预览
         function checkConvertButtonState() {
             const convertBtn = document.getElementById('convertBtn');
+            const exportPreviewBtn = document.getElementById('exportPreviewBtn');
 
             // 检查是否所有卡片都有有效图片
             const allValid = cards.every(card => card.isValid);
 
+            // 检查输出图片数据大小是否小于2M
+            let totalOutputSize = 0;
+            if (allValid) {
+                // 获取当前取模设置
+                const colorFormat = document.getElementById('colorFormat').value;
+                const compressionAlgorithm = document.getElementById('compressionAlgorithm').value;
+
+                // 计算总输出大小
+                for (const card of cards) {
+                    // 计算每像素字节数
+                    let bytesPerPixel = 3; // 默认RGB888
+                    if (colorFormat === 'rgb565') {
+                        bytesPerPixel = 2;
+                    } else if (colorFormat === 'rgb332') {
+                        bytesPerPixel = 1;
+                    } else if (colorFormat === 'argb8888') {
+                        bytesPerPixel = 4;
+                    } else if (colorFormat === 'argb4444') {
+                        bytesPerPixel = 2;
+                    } else if (colorFormat === 'argb2222') {
+                        bytesPerPixel = 1;
+                    }
+
+                    // 计算单张图片大小
+                    const singleImageSize = card.width * card.height * bytesPerPixel;
+                    // 乘以图片数量
+                    totalOutputSize += singleImageSize * card.images.length;
+                }
+            }
+
+            // 启用/禁用转换按钮
             convertBtn.disabled = !allValid;
+
+            // 启用/禁用导出预览按钮（小于2M才允许）
+            const maxPreviewSize = 2 * 1024 * 1024; // 2MB
+            exportPreviewBtn.disabled = !allValid || totalOutputSize >= maxPreviewSize;
+
+            // 添加工具提示
+            if (totalOutputSize >= maxPreviewSize) {
+                exportPreviewBtn.title = `导出预览仅支持小于2M的文件，当前大小: ${formatBytes(totalOutputSize)}`;
+            } else {
+                exportPreviewBtn.title = '';
+            }
         }
 
         // 并发控制函数 - 限制同时处理的任务数量
-        async function concurrencyControl(tasks, concurrencyLimit) {
+        async function concurrencyControl(tasks, concurrencyLimit, progressCallback) {
             const results = [];
             const executing = new Set();
+            let completedTasks = 0;
 
             async function executeNext() {
                 if (tasks.length === 0) return;
@@ -3007,6 +2762,12 @@
                 try {
                     const result = await promise;
                     results.push(result);
+                    completedTasks++;
+
+                    // 调用进度回调
+                    if (typeof progressCallback === 'function') {
+                        progressCallback();
+                    }
                 } catch (error) {
                     throw error;
                 } finally {
@@ -3132,14 +2893,15 @@
             generateBinCFile(filename, format, imageInfo);
         }
 
-        // 生成所有图片的C文件
-        async function generateCFileForAllImages(filename, format) {
-            let content = `#include <stdint.h>\n`;
-            content += `#include <sgl_core.h>\n\n`;
-            content += `// ${filename} - Generated by Image To Array Tool\n\n`;
+        // 生成C文件内容的公共函数
+        async function generateCFileContentCommon(filename, format, progressCallback) {
+            const contentArray = [];
+            contentArray.push(`#include <stdint.h>\n`);
+            contentArray.push(`#include <sgl_core.h>\n\n`);
+            contentArray.push(`// ${filename} - Generated by Image To Array Tool\n\n`);
 
             // 存储所有sgl_pixmap_t结构体定义
-            let pixmapStructures = '';
+            const pixmapStructuresArray = [];
             // 存储需要组合为数组的结构体信息
             const structArrays = [];
             // 存储卡片的“组合为数组”设置
@@ -3163,22 +2925,21 @@
                     const imageItem = card.images[imgIndex];
                     // 创建图片处理任务
                     imageTasks.push(async () => {
-                        return await processImageForC(card, imageItem, imgIndex, cardIndex, format);
+                        const result = await processImageForC(card, imageItem, imgIndex, cardIndex, format);
+                        // 调用进度回调
+                        if (typeof progressCallback === 'function') {
+                            processedImages++;
+                            progressCallback(processedImages, totalImages);
+                        }
+                        return result;
                     });
                 }
             }
 
-            // 定义进度更新回调
-            const updateProgressCallback = () => {
-                processedImages++;
-                const progress = Math.min(90, (processedImages / totalImages) * 90); // 90%用于图片处理，留10%给文件生成
-                updateProgress(progress, `正在处理图片 ${processedImages}/${totalImages}...`);
-            };
-
             // 获取最佳并发数
             const optimalConcurrency = getOptimalConcurrency();
             // 执行并发任务
-            const results = await concurrencyControl(imageTasks, optimalConcurrency, updateProgressCallback);
+            const results = await concurrencyControl(imageTasks, optimalConcurrency);
 
             // 处理结果，按顺序生成内容
             // 首先按卡片和图片索引排序结果，确保生成的顺序正确
@@ -3203,8 +2964,8 @@
                 }
 
                 // 添加数组定义
-                content += `// ${result.arrayPrefix} - ${result.width}x${result.height} ${format.toUpperCase()}${result.useRle ? ' (RLE压缩)' : ''}\n`;
-                content += `static const uint8_t ${result.arrayPrefix}_data[${result.arraySize}] = {\n    ${result.pixelData}\n};\n\n`;
+                contentArray.push(`// ${result.arrayPrefix} - ${result.width}x${result.height} ${format.toUpperCase()}${result.useRle ? ' (RLE压缩)' : ''}\n`);
+                contentArray.push(`static const uint8_t ${result.arrayPrefix}_data[${result.arraySize}] = {\n    ${result.pixelData}\n};\n\n`);
 
                 // 生成结构体名称
                 const structName = `${result.arrayPrefix}_pixmap`;
@@ -3238,33 +2999,33 @@
                         // 图片数量=1，生成单个结构体
                         const struct = structs[0];
                         if (struct) {
-                            pixmapStructures += `// 选项卡 ${cardIndex + 1} 图片 ${struct.imgIndex + 1} 的sgl_pixmap_t结构体\n`;
-                            pixmapStructures += `const sgl_pixmap_t ${struct.name} = {\n`;
-                            pixmapStructures += `    .width = ${struct.width},\n`;
-                            pixmapStructures += `    .height = ${struct.height},\n`;
-                            pixmapStructures += `    .bitmap.array = ${struct.arrayPrefix}_data,\n`;
-                            pixmapStructures += `    .format = ${struct.formatValue},\n`;
-                            pixmapStructures += `};\n\n`;
+                            pixmapStructuresArray.push(`// 选项卡 ${cardIndex + 1} 图片 ${struct.imgIndex + 1} 的sgl_pixmap_t结构体\n`);
+                            pixmapStructuresArray.push(`const sgl_pixmap_t ${struct.name} = {\n`);
+                            pixmapStructuresArray.push(`    .width = ${struct.width},\n`);
+                            pixmapStructuresArray.push(`    .height = ${struct.height},\n`);
+                            pixmapStructuresArray.push(`    .bitmap.array = ${struct.arrayPrefix}_data,\n`);
+                            pixmapStructuresArray.push(`    .format = ${struct.formatValue},\n`);
+                            pixmapStructuresArray.push(`};\n\n`);
                         }
                     }
                 } else {
                     // 取消勾选"组合为数组"，生成单个结构体
                     for (const struct of structs) {
-                        pixmapStructures += `// 选项卡 ${cardIndex + 1} 图片 ${struct.imgIndex + 1} 的sgl_pixmap_t结构体\n`;
-                        pixmapStructures += `const sgl_pixmap_t ${struct.name} = {\n`;
-                        pixmapStructures += `    .width = ${struct.width},\n`;
-                        pixmapStructures += `    .height = ${struct.height},\n`;
-                        pixmapStructures += `    .bitmap.array = ${struct.arrayPrefix}_data,\n`;
-                        pixmapStructures += `    .format = ${struct.formatValue},\n`;
-                        pixmapStructures += `};\n\n`;
+                        pixmapStructuresArray.push(`// 选项卡 ${cardIndex + 1} 图片 ${struct.imgIndex + 1} 的sgl_pixmap_t结构体\n`);
+                        pixmapStructuresArray.push(`const sgl_pixmap_t ${struct.name} = {\n`);
+                        pixmapStructuresArray.push(`    .width = ${struct.width},\n`);
+                        pixmapStructuresArray.push(`    .height = ${struct.height},\n`);
+                        pixmapStructuresArray.push(`    .bitmap.array = ${struct.arrayPrefix}_data,\n`);
+                        pixmapStructuresArray.push(`    .format = ${struct.formatValue},\n`);
+                        pixmapStructuresArray.push(`};\n\n`);
                     }
                 }
             }
 
             // 将所有单独的sgl_pixmap_t结构体定义添加到文件
-            if (pixmapStructures) {
-                content += `// 所有图片的sgl_pixmap_t结构体定义\n`;
-                content += pixmapStructures;
+            if (pixmapStructuresArray.length > 0) {
+                contentArray.push(`// 所有图片的sgl_pixmap_t结构体定义\n`);
+                contentArray.push(...pixmapStructuresArray);
             }
 
             // 生成结构体数组定义
@@ -3276,21 +3037,35 @@
                 const arrayName = `${card.arrayPrefix}_array`;
 
                 // 添加结构体数组定义
-                content += `// ${card.arrayPrefix} 结构体数组 - ${structs.length}张图片\n`;
-                content += `const sgl_pixmap_t ${arrayName}[${structs.length}] = {\n`;
+                contentArray.push(`// ${card.arrayPrefix} 结构体数组 - ${structs.length}张图片\n`);
+                contentArray.push(`const sgl_pixmap_t ${arrayName}[${structs.length}] = {\n`);
 
                 for (let i = 0; i < structs.length; i++) {
                     const struct = structs[i];
-                    content += `    {\n`;
-                    content += `        .width = ${struct.width},\n`;
-                    content += `        .height = ${struct.height},\n`;
-                    content += `        .bitmap.array = ${struct.arrayPrefix}_data,\n`;
-                    content += `        .format = ${struct.formatValue}\n`;
-                    content += `    }${i < structs.length - 1 ? ',' : ''}\n`;
+                    contentArray.push(`    {\n`);
+                    contentArray.push(`        .width = ${struct.width},\n`);
+                    contentArray.push(`        .height = ${struct.height},\n`);
+                    contentArray.push(`        .bitmap.array = ${struct.arrayPrefix}_data,\n`);
+                    contentArray.push(`        .format = ${struct.formatValue}\n`);
+                    contentArray.push(`    }${i < structs.length - 1 ? ',' : ''}\n`);
                 }
 
-                content += `};\n\n`;
+                contentArray.push(`};\n\n`);
             }
+
+            return contentArray.join('');
+        }
+
+        // 生成所有图片的C文件
+        async function generateCFileForAllImages(filename, format) {
+            // 定义进度更新回调
+            const updateProgressCallback = (processed, total) => {
+                const progress = Math.min(90, (processed / total) * 90); // 90%用于图片处理，留10%给文件生成
+                updateProgress(progress, `正在处理图片 ${processed}/${total}...`);
+            };
+
+            // 生成C文件内容
+            const content = await generateCFileContentCommon(filename, format, updateProgressCallback);
 
             updateProgress(90, '正在生成文件...');
 
@@ -3301,9 +3076,7 @@
         // 生成所有图片的BIN文件
         async function generateBinFileForAllImages(filename, format) {
             // 先收集所有卡片的像素数据
-            const allCardsData = [];
-
-            // 存储每张图片的信息
+            let totalSize = 0;
             const imageInfo = [];
 
             // 计算总图片数量（所有选项卡的图片总和）
@@ -3348,14 +3121,24 @@
                 return a.imgIndex - b.imgIndex;
             });
 
-            // 遍历处理结果，收集数据
+            // 计算总数据大小
+            for (const result of results) {
+                totalSize += result.finalBytes.length;
+            }
+
+            // 创建ArrayBuffer
+            const arrayBuffer = new ArrayBuffer(totalSize);
+            const view = new DataView(arrayBuffer);
+            let currentOffset = 0;
+
+            // 遍历处理结果，直接写入ArrayBuffer
             for (const result of results) {
                 // 记录当前图片的起始地址
-                const startAddress = allCardsData.length;
+                const startAddress = currentOffset;
 
-                // 高效添加到总数据，避免使用扩展运算符
+                // 直接将数据写入ArrayBuffer
                 for (let i = 0; i < result.finalBytes.length; i++) {
-                    allCardsData.push(result.finalBytes[i]);
+                    view.setUint8(currentOffset++, result.finalBytes[i]);
                 }
 
                 // 存储图片信息
@@ -3370,15 +3153,6 @@
                 });
             }
 
-            // 创建ArrayBuffer
-            const arrayBuffer = new ArrayBuffer(allCardsData.length);
-            const view = new DataView(arrayBuffer);
-
-            // 将所有数据写入ArrayBuffer
-            for (let i = 0; i < allCardsData.length; i++) {
-                view.setUint8(i, allCardsData[i]);
-            }
-
             updateProgress(90, '正在生成文件...');
 
             // 下载文件
@@ -3391,18 +3165,13 @@
 
         // 生成BIN格式对应的C文件
         function generateBinCFile(filename, format, imageInfo) {
-            let content = `#include <stdint.h>
-`;
-            content += `#include <sgl_core.h>
-
-`;
-            content += `// ${filename} - Generated by Image To Array Tool
-
-`;
+            const contentArray = [];
+            contentArray.push(`#include <stdint.h>\n`);
+            contentArray.push(`#include <sgl_core.h>\n\n`);
+            contentArray.push(`// ${filename} - Generated by Image To Array Tool\n\n`);
 
             // 生成sgl_pixmap_t结构体
-            content += `// 图片数据结构体定义
-`;
+            contentArray.push(`// 图片数据结构体定义\n`);
 
             // 按卡片分组图片信息
             const cardGroups = {};
@@ -3422,54 +3191,36 @@
 
                 if (combineAsArray && infos.length > 1) {
                     // 组合为数组
-                    content += `// ${prefix} 结构体数组 - ${infos.length}张图片
-`;
-                    content += `const sgl_pixmap_t ${prefix}_array[${infos.length}] = {
-`;
+                    contentArray.push(`// ${prefix} 结构体数组 - ${infos.length}张图片\n`);
+                    contentArray.push(`const sgl_pixmap_t ${prefix}_array[${infos.length}] = {\n`);
 
                     for (let i = 0; i < infos.length; i++) {
                         const info = infos[i];
-                        content += `    {
-`;
-                        content += `        .width = ${info.width},
-`;
-                        content += `        .height = ${info.height},
-`;
-                        content += `        .bitmap.addr = 0x${info.startAddress.toString(16).padStart(8, '0')}, // 图片在BIN文件中的起始地址
-`;
-                        content += `        .format = ${info.format}
-`;
-                        content += `    }${i < infos.length - 1 ? ',' : ''}
-`;
+                        contentArray.push(`    {\n`);
+                        contentArray.push(`        .width = ${info.width},\n`);
+                        contentArray.push(`        .height = ${info.height},\n`);
+                        contentArray.push(`        .bitmap.addr = 0x${info.startAddress.toString(16).padStart(8, '0')}, // 图片在BIN文件中的起始地址\n`);
+                        contentArray.push(`        .format = ${info.format}\n`);
+                        contentArray.push(`    }${i < infos.length - 1 ? ',' : ''}\n`);
                     }
 
-                    content += `};
-
-`;
+                    contentArray.push(`};\n\n`);
                 } else {
                     // 单独输出
                     for (const info of infos) {
-                        content += `// ${info.name} - ${info.width}x${info.height} ${format.toUpperCase()}${info.format.includes('RLE') ? ' (RLE压缩)' : ''}
-`;
-                        content += `const sgl_pixmap_t ${info.name}_pixmap = {
-`;
-                        content += `    .width = ${info.width},
-`;
-                        content += `    .height = ${info.height},
-`;
-                        content += `    .bitmap.addr = 0x${info.startAddress.toString(16).padStart(8, '0')}, // 图片在BIN文件中的起始地址
-`;
-                        content += `    .format = ${info.format},
-`;
-                        content += `};
-
-`;
+                        contentArray.push(`// ${info.name} - ${info.width}x${info.height} ${format.toUpperCase()}${info.format.includes('RLE') ? ' (RLE压缩)' : ''}\n`);
+                        contentArray.push(`const sgl_pixmap_t ${info.name}_pixmap = {\n`);
+                        contentArray.push(`    .width = ${info.width},\n`);
+                        contentArray.push(`    .height = ${info.height},\n`);
+                        contentArray.push(`    .bitmap.addr = 0x${info.startAddress.toString(16).padStart(8, '0')}, // 图片在BIN文件中的起始地址\n`);
+                        contentArray.push(`    .format = ${info.format},\n`);
+                        contentArray.push(`};\n\n`);
                     }
                 }
             }
 
             // 下载文件
-            downloadFile(`${filename}.c`, content);
+            downloadFile(`${filename}.c`, contentArray.join(''));
         }
 
         // RLE压缩算法 - 按像素为单位压缩
@@ -3488,6 +3239,8 @@
                 bytesPerPixel = 4;
             } else if (colorFormat === 'argb4444') {
                 bytesPerPixel = 2;
+            } else if (colorFormat === 'argb2222') {
+                bytesPerPixel = 1;
             }
 
             const compressed = [];
@@ -3495,7 +3248,7 @@
 
             // 确保数据长度是像素字节数的整数倍
             if (dataLength % bytesPerPixel !== 0) {
-                return data; // 数据格式错误，返回原始数据
+                return Array.isArray(data) ? data : Array.from(data); // 数据格式错误，返回原始数据
             }
 
             // 计算总像素数
@@ -3546,6 +3299,12 @@
 
         // 单张图片处理函数 - 用于C文件生成
         async function processImageForC(card, imageItem, imgIndex, cardIndex, format) {
+            // 缓存DOM元素引用
+            const transparentFillCheckbox = document.getElementById('transparentFill');
+            const fillColorInput = document.getElementById('fillColor');
+            const reverseOrderCheckbox = document.getElementById('reverseOrder');
+            const compressionAlgorithmSelect = document.getElementById('compressionAlgorithm');
+
             // 创建canvas进行图片处理
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
@@ -3560,12 +3319,12 @@
             });
 
             // 检查是否启用透明填充
-            const useTransparentFill = document.getElementById('transparentFill').checked;
+            const useTransparentFill = transparentFillCheckbox.checked;
             let fillR = 255, fillG = 255, fillB = 255;
 
             if (useTransparentFill) {
                 // 获取填充颜色
-                const fillColor = document.getElementById('fillColor').value.trim().toUpperCase();
+                const fillColor = fillColorInput.value.trim().toUpperCase();
                 if (/^[0-9A-F]{6}$/.test(fillColor)) {
                     // 解析RGB值
                     fillR = parseInt(fillColor.substring(0, 2), 16);
@@ -3598,6 +3357,9 @@
             imageData = processImageData(imageData, format);
             const data = imageData.data;
 
+            // 缓存反字序设置
+            const isReverseOrder = reverseOrderCheckbox.checked;
+
             // 生成像素数据数组
             const pixelBytes = [];
 
@@ -3613,7 +3375,6 @@
                         // 普通模式
                         if (format === 'rgb888') {
                             // 检查反字序设置
-                            const isReverseOrder = document.getElementById('reverseOrder').checked;
                             if (isReverseOrder) {
                                 // BGR顺序
                                 pixelBytes.push(b);
@@ -3635,8 +3396,7 @@
                             const highByte = (value >> 8) & 0xFF;
 
                             // 检查反字序设置
-                            const isLittleEndian = document.getElementById('reverseOrder').checked;
-                            if (isLittleEndian) {
+                            if (isReverseOrder) {
                                 // 低字节在前，高字节在后（小端序）
                                 pixelBytes.push(lowByte);
                                 pixelBytes.push(highByte);
@@ -3654,7 +3414,6 @@
                             pixelBytes.push(value);
                         } else if (format === 'argb8888') {
                             // 检查反字序设置
-                            const isReverseOrder = document.getElementById('reverseOrder').checked;
                             if (isReverseOrder) {
                                 // B+G+R+A顺序
                                 pixelBytes.push(b);
@@ -3677,9 +3436,8 @@
                             const value = (a4 << 12) | (r4 << 8) | (g4 << 4) | b4;
                             const lowByte = value & 0xFF;
                             const highByte = (value >> 8) & 0xFF;
-                            
+
                             // 检查反字序设置
-                            const isReverseOrder = document.getElementById('reverseOrder').checked;
                             if (isReverseOrder) {
                                 // 低字节在前，高字节在后（小端序）
                                 pixelBytes.push(lowByte);
@@ -3689,12 +3447,20 @@
                                 pixelBytes.push(highByte);
                                 pixelBytes.push(lowByte);
                             }
+                        } else if (format === 'argb2222') {
+                            // ARGB2222格式：1字节，A(2bit),R(2bit),G(2bit),B(2bit)
+                            const a2 = (a >> 6) & 0x03;
+                            const r2 = (r >> 6) & 0x03;
+                            const g2 = (g >> 6) & 0x03;
+                            const b2 = (b >> 6) & 0x03;
+                            const value = (a2 << 6) | (r2 << 4) | (g2 << 2) | b2;
+                            pixelBytes.push(value);
                         }
                 }
             }
 
             // 检查是否启用压缩
-            const useRle = document.getElementById('compressionAlgorithm').value === 'rle';
+            const useRle = compressionAlgorithmSelect.value === 'rle';
             // 应用RLE压缩
             let finalBytes = pixelBytes;
             if (useRle) {
@@ -3702,21 +3468,23 @@
             }
 
             // 将压缩后的数据转换为C数组格式
-            let pixelData = '';
+            const pixelDataArray = [];
             let count = 0;
 
             for (let j = 0; j < finalBytes.length; j++) {
                 const byte = finalBytes[j];
-                pixelData += `0x${byte.toString(16).padStart(2, '0')}`;
+                pixelDataArray.push(`0x${byte.toString(16).padStart(2, '0')}`);
                 count++;
 
                 if (count >= 24) {
-                    pixelData += ',\n    ';
+                    pixelDataArray.push(',\n    ');
                     count = 0;
                 } else if (j < finalBytes.length - 1) {
-                    pixelData += ', ';
+                    pixelDataArray.push(', ');
                 }
             }
+
+            const pixelData = pixelDataArray.join('');
 
             // 计算数组大小
             const arraySize = finalBytes.length;
@@ -3737,6 +3505,8 @@
                     formatValue = 'SGL_PIXMAP_FMT_RLE_ARGB8888';
                 } else if (format === 'argb4444') {
                     formatValue = 'SGL_PIXMAP_FMT_RLE_ARGB4444';
+                } else if (format === 'argb2222') {
+                    formatValue = 'SGL_PIXMAP_FMT_RLE_ARGB2222';
                 }
             } else {
                 if (format === 'rgb888') {
@@ -3749,6 +3519,8 @@
                     formatValue = 'SGL_PIXMAP_FMT_ARGB8888';
                 } else if (format === 'argb4444') {
                     formatValue = 'SGL_PIXMAP_FMT_ARGB4444';
+                } else if (format === 'argb2222') {
+                    formatValue = 'SGL_PIXMAP_FMT_ARGB2222';
                 }
             }
 
@@ -3768,6 +3540,12 @@
 
         // 单张图片处理函数 - 用于BIN文件生成
         async function processImageForBin(card, imageItem, imgIndex, cardIndex, format) {
+            // 缓存DOM元素引用
+            const transparentFillCheckbox = document.getElementById('transparentFill');
+            const fillColorInput = document.getElementById('fillColor');
+            const reverseOrderCheckbox = document.getElementById('reverseOrder');
+            const compressionAlgorithmSelect = document.getElementById('compressionAlgorithm');
+
             // 创建canvas进行图片处理
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
@@ -3782,12 +3560,12 @@
             });
 
             // 检查是否启用透明填充
-            const useTransparentFill = document.getElementById('transparentFill').checked;
+            const useTransparentFill = transparentFillCheckbox.checked;
             let fillR = 255, fillG = 255, fillB = 255;
 
             if (useTransparentFill) {
                 // 获取填充颜色
-                const fillColor = document.getElementById('fillColor').value.trim().toUpperCase();
+                const fillColor = fillColorInput.value.trim().toUpperCase();
                 if (/^[0-9A-F]{6}$/.test(fillColor)) {
                     // 解析RGB值
                     fillR = parseInt(fillColor.substring(0, 2), 16);
@@ -3831,6 +3609,8 @@
                 bytesPerPixel = 4;
             } else if (format === 'argb4444') {
                 bytesPerPixel = 2;
+            } else if (format === 'argb2222') {
+                bytesPerPixel = 1;
             }
 
             // 直接计算数据，避免使用push方法
@@ -3846,10 +3626,12 @@
                     let b = data[index + 2];
                     const a = data[index + 3]; // 透明度通道
 
+                        // 缓存反字序设置
+                        const isReverseOrder = reverseOrderCheckbox.checked;
+
                         // 普通模式
                         if (format === 'rgb888') {
                             // 检查反字序设置
-                            const isReverseOrder = document.getElementById('reverseOrder').checked;
                             if (isReverseOrder) {
                                 // BGR顺序
                                 imageBytes[byteIndex++] = b;
@@ -3871,8 +3653,7 @@
                             const highByte = (value >> 8) & 0xFF;
 
                             // 检查反字序设置
-                            const isLittleEndian = document.getElementById('reverseOrder').checked;
-                            if (isLittleEndian) {
+                            if (isReverseOrder) {
                                 // 低字节在前，高字节在后（小端序）
                                 imageBytes[byteIndex++] = lowByte;
                                 imageBytes[byteIndex++] = highByte;
@@ -3890,7 +3671,6 @@
                             imageBytes[byteIndex++] = value;
                         } else if (format === 'argb8888') {
                             // 检查反字序设置
-                            const isReverseOrder = document.getElementById('reverseOrder').checked;
                             if (isReverseOrder) {
                                 // B+G+R+A顺序
                                 imageBytes[byteIndex++] = b;
@@ -3913,9 +3693,8 @@
                             const value = (a4 << 12) | (r4 << 8) | (g4 << 4) | b4;
                             const lowByte = value & 0xFF;
                             const highByte = (value >> 8) & 0xFF;
-                            
+
                             // 检查反字序设置
-                            const isReverseOrder = document.getElementById('reverseOrder').checked;
                             if (isReverseOrder) {
                                 // 低字节在前，高字节在后（小端序）
                                 imageBytes[byteIndex++] = lowByte;
@@ -3925,17 +3704,27 @@
                                 imageBytes[byteIndex++] = highByte;
                                 imageBytes[byteIndex++] = lowByte;
                             }
+                        } else if (format === 'argb2222') {
+                            // ARGB2222格式：1字节，A(2bit),R(2bit),G(2bit),B(2bit)
+                            const a2 = (a >> 6) & 0x03;
+                            const r2 = (r >> 6) & 0x03;
+                            const g2 = (g >> 6) & 0x03;
+                            const b2 = (b >> 6) & 0x03;
+                            const value = (a2 << 6) | (r2 << 4) | (g2 << 2) | b2;
+                            imageBytes[byteIndex++] = value;
                         }
                 }
             }
 
             // 检查是否启用压缩
-            const useRle = document.getElementById('compressionAlgorithm').value === 'rle';
+            const useRle = compressionAlgorithmSelect.value === 'rle';
             // 应用RLE压缩
             let finalBytes;
             if (useRle) {
-                finalBytes = rleCompress(Array.from(imageBytes), format);
+                finalBytes = rleCompress(imageBytes, format);
             } else {
+                // 非压缩模式下，直接使用TypedArray数据，避免内存拷贝
+                // 但需要转换为数组以保持接口一致性
                 finalBytes = Array.from(imageBytes);
             }
 
@@ -3955,6 +3744,8 @@
                     formatValue = 'SGL_PIXMAP_FMT_RLE_ARGB8888';
                 } else if (format === 'argb4444') {
                     formatValue = 'SGL_PIXMAP_FMT_RLE_ARGB4444';
+                } else if (format === 'argb2222') {
+                    formatValue = 'SGL_PIXMAP_FMT_RLE_ARGB2222';
                 }
             } else {
                 if (format === 'rgb888') {
@@ -3967,6 +3758,8 @@
                     formatValue = 'SGL_PIXMAP_FMT_ARGB8888';
                 } else if (format === 'argb4444') {
                     formatValue = 'SGL_PIXMAP_FMT_ARGB4444';
+                } else if (format === 'argb2222') {
+                    formatValue = 'SGL_PIXMAP_FMT_ARGB2222';
                 }
             }
 
@@ -3999,6 +3792,250 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(a.href);
+        }
+
+        // 导出预览函数
+        async function exportPreview() {
+            // 获取全局设置
+            const colorFormat = document.getElementById('colorFormat').value;
+            const outputFormat = document.getElementById('outputFormat').value;
+            const filename = document.getElementById('filename');
+
+            // 检查文件名是否为空
+            if (!filename.value) {
+                alert('错误：文件名不能为空！请输入有效的文件名。');
+                return;
+            }
+
+            // 检查是否所有卡片都选择了图片
+            for (const card of cards) {
+                if (!card.isValid) {
+                    alert(`错误：图片 ${card.index + 1} 没有选择图片！`);
+                    return;
+                }
+            }
+
+            // 检查数组名前缀是否唯一
+            if (!checkArrayPrefixUnique()) {
+                alert('错误：数组名前缀必须唯一！请修改重复的数组名前缀。');
+                return;
+            }
+
+            try {
+                // 显示进度条
+                resetProgress();
+                updateProgress(0, '准备生成预览...');
+
+                let content;
+                if (outputFormat === '.c') {
+                    // 生成C文件内容用于预览
+                    content = await generateCFileContent(filename.value, colorFormat, (processed, total) => {
+                        const progress = Math.min(90, (processed / total) * 90);
+                        updateProgress(progress, `正在处理图片 ${processed}/${total}...`);
+                    });
+                } else {
+                    // 对于bin格式，生成对应的C文件内容用于预览
+                    // 模拟生成bin文件的过程，获取图片信息
+                    const imageInfo = [];
+                    let currentOffset = 0;
+
+                    // 收集所有需要处理的图片任务
+                    const imageTasks = [];
+                    const totalImages = cards.reduce((sum, card) => sum + card.images.length, 0);
+                    let processedImages = 0;
+
+                    // 收集任务
+                    for (let cardIndex = 0; cardIndex < cards.length; cardIndex++) {
+                        const card = cards[cardIndex];
+
+                        // 添加当前卡片的所有图片处理任务
+                        for (let imgIndex = 0; imgIndex < card.images.length; imgIndex++) {
+                            const imageItem = card.images[imgIndex];
+                            // 创建图片处理任务
+                            imageTasks.push(async () => {
+                                const result = await processImageForBin(card, imageItem, imgIndex, cardIndex, colorFormat);
+                                // 调用进度回调
+                                processedImages++;
+                                updateProgress(Math.min(90, (processedImages / totalImages) * 90), `正在处理图片 ${processedImages}/${totalImages}...`);
+                                return result;
+                            });
+                        }
+                    }
+
+                    // 执行并发任务
+                    const optimalConcurrency = getOptimalConcurrency();
+                    const results = await concurrencyControl(imageTasks, optimalConcurrency);
+
+                    // 处理结果，按顺序生成内容
+                    results.sort((a, b) => {
+                        if (a.cardIndex !== b.cardIndex) {
+                            return a.cardIndex - b.cardIndex;
+                        }
+                        return a.imgIndex - b.imgIndex;
+                    });
+
+                    // 计算偏移量并生成图片信息
+                    for (const result of results) {
+                        const startAddress = currentOffset;
+                        currentOffset += result.finalBytes.length;
+
+                        imageInfo.push({
+                            card: result.card,
+                            name: result.arrayPrefix,
+                            startAddress: startAddress,
+                            dataSize: result.finalBytes.length,
+                            format: result.formatValue,
+                            width: result.width,
+                            height: result.height
+                        });
+                    }
+
+                    // 生成对应的C文件内容
+                    const contentArray = [];
+                    contentArray.push(`#include <stdint.h>\n`);
+                    contentArray.push(`#include <sgl_core.h>\n\n`);
+                    contentArray.push(`// ${filename.value} - Generated by Image To Array Tool\n\n`);
+                    contentArray.push(`// 图片数据结构体定义\n`);
+
+                    // 按卡片分组图片信息
+                    const cardGroups = {};
+                    imageInfo.forEach(info => {
+                        if (!cardGroups[info.card.arrayPrefix]) {
+                            cardGroups[info.card.arrayPrefix] = [];
+                        }
+                        cardGroups[info.card.arrayPrefix].push(info);
+                    });
+
+                    // 遍历每个卡片组
+                    for (const [prefix, infos] of Object.entries(cardGroups)) {
+                        const card = infos[0].card;
+                        const cardElement = document.querySelector(`[data-card-index="${card.index}"]`);
+                        // 获取“组合为数组”单选框状态，默认选中
+                        const combineAsArray = cardElement.querySelector('.combine-as-array')?.checked ?? true;
+
+                        if (combineAsArray && infos.length > 1) {
+                            // 组合为数组
+                            contentArray.push(`// ${prefix} 结构体数组 - ${infos.length}张图片\n`);
+                            contentArray.push(`const sgl_pixmap_t ${prefix}_array[${infos.length}] = {\n`);
+
+                            for (let i = 0; i < infos.length; i++) {
+                                const info = infos[i];
+                                contentArray.push(`    {\n`);
+                                contentArray.push(`        .width = ${info.width},\n`);
+                                contentArray.push(`        .height = ${info.height},\n`);
+                                contentArray.push(`        .bitmap.addr = 0x${info.startAddress.toString(16).padStart(8, '0')}, // 图片在BIN文件中的起始地址\n`);
+                                contentArray.push(`        .format = ${info.format}\n`);
+                                contentArray.push(`    }${i < infos.length - 1 ? ',' : ''}\n`);
+                            }
+
+                            contentArray.push(`};\n\n`);
+                        } else {
+                            // 单独输出
+                            for (const info of infos) {
+                                contentArray.push(`// ${info.name} - ${info.width}x${info.height} ${colorFormat.toUpperCase()}${info.format.includes('RLE') ? ' (RLE压缩)' : ''}\n`);
+                                contentArray.push(`const sgl_pixmap_t ${info.name}_pixmap = {\n`);
+                                contentArray.push(`    .width = ${info.width},\n`);
+                                contentArray.push(`    .height = ${info.height},\n`);
+                                contentArray.push(`    .bitmap.addr = 0x${info.startAddress.toString(16).padStart(8, '0')}, // 图片在BIN文件中的起始地址\n`);
+                                contentArray.push(`    .format = ${info.format},\n`);
+                                contentArray.push(`};\n\n`);
+                            }
+                        }
+                    }
+
+                    content = contentArray.join('');
+                }
+
+                // 完成进度条
+                updateProgress(100, '预览生成完成！');
+
+                // 显示预览弹窗
+                showPreviewModal(content, filename.value);
+            } catch (error) {
+                // 重置进度条
+                resetProgress();
+                alert('预览失败：' + error.message);
+            }
+        }
+
+        // 生成C文件内容（用于预览）
+        async function generateCFileContent(filename, format, progressCallback) {
+            // 直接调用公共函数生成C文件内容
+            return await generateCFileContentCommon(filename, format, progressCallback);
+        }
+
+        // 显示预览弹窗
+        function showPreviewModal(content, filename) {
+            const modal = document.getElementById('previewModal');
+            const codePreview = document.getElementById('codePreview');
+            const previewTabs = document.getElementById('previewTabs');
+            const closeModalButton = document.getElementById('closeModalButton');
+            const copyButton = document.getElementById('copyButton');
+
+            // 设置预览内容
+            codePreview.textContent = content;
+
+            // 清空标签页
+            previewTabs.innerHTML = '';
+
+            // 添加标签页（使用文件名作为标签）
+            const tabButton = document.createElement('button');
+            tabButton.textContent = `${filename}.c`;
+            tabButton.style.padding = '12px 24px';
+            tabButton.style.border = 'none';
+            tabButton.style.background = '#4facfe';
+            tabButton.style.color = 'white';
+            tabButton.style.fontSize = '1em';
+            tabButton.style.fontWeight = '500';
+            tabButton.style.cursor = 'pointer';
+            tabButton.style.borderBottom = '3px solid #4facfe';
+            tabButton.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
+            previewTabs.appendChild(tabButton);
+
+            // 计算弹窗大小
+            const containerWidth = document.querySelector('.container').clientWidth;
+            const modalWidth = containerWidth * 0.8;
+            const modalHeight = modalWidth * 0.8;
+
+            // 设置弹窗大小
+            const modalContent = document.getElementById('previewModalContent');
+            modalContent.style.width = `${modalWidth}px`;
+            modalContent.style.height = `${modalHeight}px`;
+
+            // 显示弹窗
+            modal.style.display = 'flex';
+
+            // 关闭按钮事件
+            closeModalButton.onclick = function() {
+                modal.style.display = 'none';
+            };
+
+            // 复制按钮事件
+            copyButton.onclick = function() {
+                navigator.clipboard.writeText(content).then(function() {
+                    // 显示复制成功提示
+                    const originalText = copyButton.textContent;
+                    copyButton.textContent = '复制成功！';
+                    copyButton.style.background = 'rgba(76, 175, 80, 0.9)';
+                    copyButton.style.color = 'white';
+
+                    // 恢复按钮状态
+                    setTimeout(function() {
+                        copyButton.textContent = originalText;
+                        copyButton.style.background = 'rgba(255, 255, 255, 0.9)';
+                        copyButton.style.color = '#4facfe';
+                    }, 2000);
+                }).catch(function(err) {
+                    alert('复制失败：', err);
+                });
+            };
+
+            // 点击弹窗外部关闭
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
         }
     </script>
 </body>
