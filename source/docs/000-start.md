@@ -300,6 +300,7 @@ sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮
     ```c
     #define    CONFIG_SGL_FBDEV_PIXEL_DEPTH       16          //颜色深度，这里是16位，即RGB565
     #define    CONFIG_SGL_FBDEV_ROTATION          0           //屏幕旋转角度，软件旋转，这里设置为0度，即不做旋转
+    #define    CONFIG_SGL_FBDEV_RUNTIME_ROTATION  0           //屏幕实时旋转角度
     #define    CONFIG_SGL_SYSTICK_MS              10          //SGL图形刷新事件间隔，这里设置为10ms
     #define    CONFIG_SGL_EVENT_QUEUE_SIZE        16          //事件队列大小，这里设置为16
     #define    CONFIG_SGL_DIRTY_AREA_NUM_MAX      16          //脏区域最大数量，这里设置为16
