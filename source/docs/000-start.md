@@ -86,8 +86,7 @@ source
 #define    CONFIG_SGL_LOG_LEVEL               0           //日志等级，0为全部输出，1为错误输出，2为警告输出，3为信息输出，4为调试输出
 #define    CONFIG_SGL_OBJ_USE_NAME            0           //是否启用对象名称，这里不启用对象名称
 #define    CONFIG_SGL_FONT_COMPRESSED         1           //是否启用字体压缩，这里启用字体压缩
-#define    CONFIG_SGL_BOOT_LOGO               0           ///是否启用启动logo，这里不启用启动logo
-#define    CONFIG_SGL_BOOT_ANIMATION          0           //是否启用启动动画，这里不启用启动动画
+#define    CONFIG_SGL_BOOT_LOGO               1           ///是否启用启动logo，这里启用开机logo
 #define    CONFIG_SGL_HEAP_ALGO               lwmem       //内存管理算法，这里选择lwmem
 #define    CONFIG_SGL_HEAP_MEMORY_SIZE        10240       //内存大小，这里设置为10KB
 #define    CONFIG_SGL_FONT_SONG23             0           //是否启用宋体23号字体, 默认关闭
@@ -149,6 +148,8 @@ int main(void)
     // 注册Framebuffer设备
     sgl_fbdev_register(&fbinfo);
 
+    // 必须先初始化SysTick和屏幕设备，然后再初始化SGL框架
+    systick_init();
     tft_init();
 
     sgl_init();
@@ -183,13 +184,9 @@ panel_flush_area函数用于刷新指定区域，参数为：
 - `src`：区域数据指针
 panel_flush_area函数必须调用sgl_fbdev_flush_ready()函数，用来告诉SGL框架，刷新完成，可以继续处理下一帧处理。
 
-```{tip}
-如果没有使用DMA发送数据，则直接返回true即可，如果使用DMA发送数据，则需要先检测下DMA是否空闲，如果是空闲的，则发送数据后，返回true，如果DMA未空闲，则返回false。
-例如：
-使用DMA发送数据：   
 
 ```c
-void dma_complete_handler(void)
+void dma_complete_cb(void)
 {
     sgl_fbdev_flush_ready();
 }
@@ -207,8 +204,8 @@ void panel_flush_area(sgl_area_t *area, sgl_color_t *src)
 - 3. 调用sgl_init()函数初始化SGL框架       
 - 4. 在滴答中断中调用sgl_tick_inc()函数，定时为1ms    
        
-```{tip}
-sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮询或者线程中调用，每1ms调用一次即可。
+```{danger}
+sgl_tick_inc()函数必须在SGL初始化之前就应该能确保调用，否则会导致启动LOGO进入卡死状态，sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮询或者线程中调用，每1ms调用一次即可。
 ```
               
 ### KEIL IDE使用
@@ -282,8 +279,9 @@ sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮
         // 注册Framebuffer设备
         sgl_fbdev_register(&fbinfo);
 
-        //USART1_GPIO_Config();
-        //USART1_Config();
+        uart_init();
+        systick_init();
+        tft_init();
 
         /* init sgl */
         sgl_init();
@@ -310,8 +308,7 @@ sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮
     #define    CONFIG_SGL_LOG_LEVEL               0           //日志等级，0为全部输出，1为错误输出，2为警告输出，3为信息输出，4为调试输出
     #define    CONFIG_SGL_OBJ_USE_NAME            0           //是否启用对象名称，这里不启用对象名称
     #define    CONFIG_SGL_FONT_COMPRESSED         1           //是否启用字体压缩，这里启用字体压缩
-    #define    CONFIG_SGL_BOOT_LOGO               0           ///是否启用启动logo，这里不启用启动logo
-    #define    CONFIG_SGL_BOOT_ANIMATION          0           //是否启用启动动画，这里不启用启动动画
+    #define    CONFIG_SGL_BOOT_LOGO               1           ///是否启用启动logo，这里不启用启动logo
     #define    CONFIG_SGL_HEAP_ALGO               lwmem       //内存管理算法，这里选择lwmem
     #define    CONFIG_SGL_HEAP_MEMORY_SIZE        10240       //内存大小，这里设置为10KB
     #define    CONFIG_SGL_FONT_SONG23             0           //是否启用宋体23号字体, 默认关闭
@@ -338,6 +335,9 @@ sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮
 int main(void)
 {
     ...
+    uart_init();
+    systick_init();
+    tft_init();
     sgl_init();
     ...
 
