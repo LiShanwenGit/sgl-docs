@@ -55,13 +55,13 @@ const sgl_pixmap_t pic1_array[2] = {
     {
         .width = 240,
         .height = 240,
-        .bitmap = pic1_data,
+        .bitmap.array = pic1_data,
         .format = SGL_PIXMAP_FMT_RGB565
     },
     {
         .width = 240,
         .height = 240,
-        .bitmap = pic1_1_data,
+        .bitmap.array = pic1_1_data,
         .format = SGL_PIXMAP_FMT_RGB565
     }
 };

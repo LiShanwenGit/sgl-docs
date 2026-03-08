@@ -413,7 +413,39 @@ void dma_complete_cb(void)
 
 void panel_flush_area(sgl_area_t *area, sgl_color_t *src)          
 {
+    tft_set_win(area->x1, area->y1, area->x2, area->y2);
+    GPIO_WriteBit(SPI_DC_PORT, SPI_DC_PIN, 1);
     //非阻塞函数
-    DMA_SendData_NoWait(src, (x2 - x1 + 1) * (y2 - y1 + 1)* sizeof(sgl_color_t));        
+    DMA_SendData_NoWait(src, (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1)* sizeof(sgl_color_t));        
 }
+```
+
+### LCD控制器方式
+LCD支持直接向屏幕控制器显存直接写入数据，对于有LCD控制器的屏幕，可以直接向控制器的显存中写数据，这样不需要再进行DMA拷贝，从而提高效率，使用方法如下：
+1. 在配置文件中添加如下配置：
+```c
+#define    CONFIG_SGL_USE_FBDEV_VRAM         1
+```
+这里的CONFIG_SGL_USE_FBDEV_VRAM为1表示使用LCD控制器方式      
+      
+2. 注册Framebuffer设备，代码如下：
+
+```c
+void lcd_flush(sgl_area_t *area, sgl_color_t *src)          
+{
+    你需要刷新LCD，这里省略代码
+    // 通知SGL刷新完成
+    sgl_fbdev_flush_ready();
+}
+
+sgl_fbinfo_t fbinfo = {
+    .xres = PANEL_WIDTH,
+    .yres = PANEL_HEIGHT,
+    .flush_area = lcd_flush,
+    .buffer[0] = lcd_addr, //这里指向LCD的显存地址
+    .buffer_size = LCD_WIDTH * LCD_HEIGHT,
+};
+
+// 注册Framebuffer设备
+sgl_fbdev_register(&fbinfo);
 ```
