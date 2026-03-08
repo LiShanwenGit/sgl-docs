@@ -186,6 +186,7 @@ panel_flush_area函数必须调用sgl_fbdev_flush_ready()函数，用来告诉SG
 
 
 ```c
+//DMA完成回调函数
 void dma_complete_cb(void)
 {
     sgl_fbdev_flush_ready();
@@ -193,7 +194,8 @@ void dma_complete_cb(void)
 
 void panel_flush_area(sgl_area_t *area, sgl_color_t *src)          
 {
-    DMA_SendData(src, (x2 - x1 + 1) * (y2 - y1 + 1)* sizeof(sgl_color_t));        
+    // 非阻塞模式
+    DMA_SendData_NoWait(src, (x2 - x1 + 1) * (y2 - y1 + 1)* sizeof(sgl_color_t));        
 }
 ```
 当然，对于使用DMA发送数据时，请使用双缓冲，即添加一个缓冲区，即`buffer[1]`，大小和`buffer[0]`一样，即`buffer_size`
@@ -279,6 +281,7 @@ sgl_tick_inc()函数必须在SGL初始化之前就应该能确保调用，否则
         // 注册Framebuffer设备
         sgl_fbdev_register(&fbinfo);
 
+        // 必须先初始化SysTick和屏幕设备，然后再初始化SGL框架
         uart_init();
         systick_init();
         tft_init();
@@ -338,6 +341,7 @@ int main(void)
     uart_init();
     systick_init();
     tft_init();
+    // 必须先初始化SysTick和屏幕设备，然后再初始化SGL框架
     sgl_init();
     ...
 
@@ -402,13 +406,14 @@ sgl_fbinfo_t fbinfo = {
 上面的代码中，panel_buffer1和panel_buffer2是双缓冲，并且panel_buffer1和panel_buffer2的buffer_size必须一致，buffer_size为缓冲区大小，这里设置为10行，即10行数据。        
 并且sgl_fbdev_flush_ready()函数在DMA完成中断处理函数中调用，如下代码：
 ```c
-void dma_complete_handler(void)
+void dma_complete_cb(void)
 {
     sgl_fbdev_flush_ready();
 }
 
 void panel_flush_area(sgl_area_t *area, sgl_color_t *src)          
 {
-    DMA_SendData_nowait(src, (x2 - x1 + 1) * (y2 - y1 + 1)* sizeof(sgl_color_t));        
+    //非阻塞函数
+    DMA_SendData_NoWait(src, (x2 - x1 + 1) * (y2 - y1 + 1)* sizeof(sgl_color_t));        
 }
 ```
