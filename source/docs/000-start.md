@@ -207,7 +207,7 @@ void panel_flush_area(sgl_area_t *area, sgl_color_t *src)
 - 4. 在滴答中断中调用sgl_tick_inc()函数，定时为1ms    
        
 ```{danger}
-sgl_tick_inc()函数必须在SGL初始化之前就应该能确保调用，否则会导致启动LOGO进入卡死状态，sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮询或者线程中调用，每1ms调用一次即可。
+sgl_tick_inc()所在的Systick或者定时器必须在SGL初始化之前就应该被初始化，否则会导致启动LOGO进入卡死状态，sgl_tick_inc()函数不是必须要在滴答中断中调用，你也可以在轮询或者线程中调用，每1ms调用一次即可。
 ```
               
 ### KEIL IDE使用

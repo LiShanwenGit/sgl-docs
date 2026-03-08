@@ -43,3 +43,8 @@ QQ交流群
 ==================
 .. image:: qqgroup.png
    :width: 300px
+
+捐款
+==================
+.. image:: alipay.png
+   :width: 300px
