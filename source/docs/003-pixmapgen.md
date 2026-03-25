@@ -22,7 +22,7 @@ ext_img控件即扩展图片控件的pixmap支持RGB332, RGB565，RGB888，并�
 const sgl_pixmap_t pic1_pixmap = {
     .width = 131,
     .height = 128,
-    .bitmap = pic1_data,
+    .bitmap.array = pic1_data,
     .format = SGL_PIXMAP_FMT_RGB565,
 };
 
