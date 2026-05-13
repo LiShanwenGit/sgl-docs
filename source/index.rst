@@ -25,6 +25,7 @@ SGL UI库特点:
    :maxdepth: 2
    :caption: 目录:
 
+   docs/000-2dball.md
    docs/000-start.md
    docs/001-base.md
    docs/002-fontgen.md
@@ -37,7 +38,34 @@ SGL UI库特点:
    docs/009-msgbox.md
    docs/010-line.md
    docs/011-canvas.md
+   docs/012-barchart.md
+   docs/013-arc.md
+   docs/014-bar.md
+   docs/015-box.md
+   docs/016-checkbox.md
+   docs/017-circle.md
+   docs/018-dropdown.md
+   docs/019-icon.md
    docs/020-imgtool.md
+   docs/021-progress.md
+   docs/022-ring.md
+   docs/023-slider.md
+   docs/024-textbox.md
+   docs/025-textline.md
+   docs/026-textlist.md
+   docs/027-viewlist.md
+   docs/028-win.md
+   docs/029-keyboard.md
+   docs/030-linechart.md
+   docs/031-piechart.md
+   docs/032-numberkbd.md
+   docs/033-polygon.md
+   docs/034-qrcode.md
+   docs/035-rectangle.md
+   docs/036-scope.md
+   docs/037-scroll.md
+   docs/038-extimg.md
+   docs/039-unzipimage.md
 
 QQ交流群
 ==================
